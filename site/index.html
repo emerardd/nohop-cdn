@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NoHop CDN</title>
 <meta name="description" content="全球唯一一个距离每位用户 0 米的内容分发网络。">
+<script src="i18n.js"></script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%232f6bff' stroke-width='3'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%232f6bff'/%3E%3C/svg%3E">
 <style>
 :root {
@@ -99,6 +100,7 @@ nav .wrap { display: flex; align-items: center; gap: 24px; height: 60px; }
 .nav-links a:hover { color: var(--text); }
 @media (min-width: 820px) { .nav-links { display: flex; } }
 .nav-cta { margin-left: auto; }
+.lang-btn { font: inherit; font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--text); cursor: pointer; }
 .btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid transparent; cursor: pointer; font-family: inherit; }
 .btn-primary { background: var(--accent); color: #fff; }
 .btn-ghost { border-color: var(--line); background: var(--surface); color: var(--text); }
@@ -111,7 +113,7 @@ nav .wrap { display: flex; align-items: center; gap: 24px; height: 60px; }
 .badge.blue { background: var(--accent-soft); color: var(--accent); }
 .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
 .hero h1 { font-size: clamp(32px, 6vw, 56px); line-height: 1.15; letter-spacing: -.02em; margin: 22px auto 18px; max-width: 14em; text-wrap: balance; }
-.hero h1 em { font-style: normal; color: var(--accent); }
+.hero h1 em { font-style: normal; color: var(--accent); white-space: nowrap; }
 .hero p.lead { color: var(--muted); font-size: clamp(16px, 2.2vw, 19px); max-width: 36em; margin: 0 auto 10px; }
 .rotator { color: var(--text); font-weight: 600; min-height: 1.65em; margin: 0 auto 30px; font-size: clamp(15px, 2vw, 17px); }
 .install { display: inline-flex; align-items: center; gap: 12px; background: var(--code-bg); color: var(--code-text); padding: 12px 14px 12px 18px; border-radius: 10px; font-size: 15px; max-width: 100%; }
@@ -351,6 +353,7 @@ footer .icp { font-size: 12.5px; }
       <a href="status.html">状态</a>
     </div>
     <a class="btn btn-primary nav-cta" href="#get-started">开始使用</a>
+    <button class="lang-btn" type="button" id="lang-btn">EN</button>
   </div>
 </nav>
 
@@ -531,7 +534,7 @@ footer .icp { font-size: 12.5px; }
       <h2>我们的底层逻辑</h2>
       <p class="sub">投资人问我们的护城河是什么。我们是这样回答的：</p>
       <div class="jargon">
-        <p>NoHop 以 <mark>localhost</mark> 为<mark>抓手</mark>，<mark>打通</mark>请求与响应的<mark>最后 0 公里</mark>，在单机维度形成数据不出门的<mark>完整闭环</mark>；通过<mark>环回能力的沉淀与复用</mark>，<mark>赋能</mark>每一台终端设备，把服务<mark>颗粒度</mark>细化到每一个字节，最终实现<mark>降本增效</mark>与用户体验的<mark>双轮驱动</mark>。</p>
+        <p data-i18n="jargon">NoHop 以 <mark>localhost</mark> 为<mark>抓手</mark>，<mark>打通</mark>请求与响应的<mark>最后 0 公里</mark>，在单机维度形成数据不出门的<mark>完整闭环</mark>；通过<mark>环回能力的沉淀与复用</mark>，<mark>赋能</mark>每一台终端设备，把服务<mark>颗粒度</mark>细化到每一个字节，最终实现<mark>降本增效</mark>与用户体验的<mark>双轮驱动</mark>。</p>
         <div class="translate"><b>翻译成人话：</b>我们在你电脑上开了个端口。</div>
       </div>
     </section>
@@ -820,6 +823,217 @@ footer .icp { font-size: 12.5px; }
 </div>
 
 <script>
+// 英文对照表：键是页面中的中文原文（去掉首尾空白），值是英文。
+i18nApply({
+  '网络': 'Network', '产品': 'Product', '性能': 'Performance', '定价': 'Pricing', '路线图': 'Roadmap', '状态': 'Status',
+  '开始使用': 'Get started',
+  '现已覆盖全球 100% 的设备': 'Now covering 100% of devices worldwide',
+  '延迟遥遥领先': 'Latency: light-years ahead',
+  '距离每位用户': "The CDN that's",
+  '0 米': '0 meters',
+  '的内容分发网络': ' from every user',
+  'NoHop 在每一台设备上都部署了边缘节点。无论用户身在何处，他们访问的永远是离自己最近的节点：他们自己的电脑。': 'NoHop has deployed an edge node on every device on Earth. Wherever your users are, they always hit the node closest to them: their own computer.',
+  'Works on my machine™，现在是一项企业级 SLA。': 'Works on my machine™ — now an enterprise SLA.',
+  '复制': 'Copy',
+  '▶ 观看品牌宣传片': '▶ Watch the brand film',
+  '查看全球网络状态 →': 'View global network status →',
+  '立即测速': 'Run a speed test',
+
+  '⚠️ 您正在以错误的方式访问本网站': "⚠️ You're viewing this website wrong",
+  '本页面目前位于': 'This page currently lives at',
+  '，距离您不是 0 米。一个 localhost CDN 的官网被放到了公网上，这违背了我们的一切原则。为获得最佳体验，请将本网站下载到您自己的电脑，然后通过 localhost 访问它：': ', which is not 0 meters from you. The website of a localhost CDN has been deployed to the public internet, which goes against everything we stand for. For the best experience, download this website to your own computer and visit it via localhost:',
+  '完成后，您与本页面之间的距离将从“未知”缩短为 0 米。': 'Once you do, the distance between you and this page drops from "unknown" to 0 meters.',
+
+  '受到以下组织的信赖（全部由我们自己创立）': 'Trusted by these fine organizations (all founded by us)',
+  '本机集团': 'Localhost Group', '环 回 银 行': 'Loopback Bank', '我自己科技': 'Myself Technologies',
+  '在我电脑上没问题研究院': 'Works-On-My-Machine Institute',
+
+  '回源延迟': 'Origin latency', '0 跳': '0 hops', '平均路由跳数': 'Average router hops',
+  '缓存命中率': 'Cache hit ratio', '任播地址（127.0.0.0/8）': 'Anycast addresses (127.0.0.0/8)',
+  '今日全球公网流量': 'Public internet traffic today',
+  '已为全人类节省的路由跳数': 'Router hops saved for humanity',
+  '自您打开本页起无事故运行': 'Incident-free since you opened this page',
+  '0 秒': '0 s',
+
+  '起源': 'Origin story', '一切始于一句话': 'It all started with one sentence',
+  '每一位工程师都说过它。每一位运维都听过它。我们是第一个认真对待它的公司。': "Every engineer has said it. Every ops person has heard it. We're the first company to take it seriously.",
+  '开': 'D', '运': 'O', '开发': 'Developer', '运维': 'Ops', 'NoHop 创始人': 'NoHop founder',
+  '在我电脑上是好的啊。': 'Works on my machine.',
+  '那总不能把你的电脑发给每个用户吧？': "Well, we can't exactly ship your machine to every user.",
+  '为什么不能？': 'Why not?',
+  '于是我们做了相反的事：不把你的电脑发给用户，而是让每个用户都只访问自己的电脑。从此，“在我电脑上是好的”成为了一句对所有人都成立的话。我们把它写进了 SLA。': 'So we did the opposite. Instead of shipping your machine to every user, we made every user visit only their own machine. Now "works on my machine" is true for everyone. We put it in the SLA.',
+
+  '全球网络': 'Global network', '一张地图，对每个人都完全正确': 'One map. Correct for everyone.',
+  '传统 CDN 需要在全球数百个城市建设机房，再用复杂的调度系统把用户导向最近的节点。我们换了一个思路：把节点建在用户所在的位置。所有位置。': 'Traditional CDNs build data centers in hundreds of cities, then use elaborate routing to steer each user to the nearest one. We took a different approach: put the node wherever the user is. Every user. Everywhere.',
+  '你在这里': 'You are here', '你也在所有地方': 'You are also everywhere',
+  '地球示意图，上面只有一个节点，标注为“你在这里”': 'A globe with a single node labeled "You are here"',
+  '边缘节点数': 'Edge nodes', '与联网设备数相同': 'One per connected device',
+  '您可见的节点': 'Nodes visible to you', '到最近节点的距离': 'Distance to nearest node',
+  '到最远节点的距离': 'Distance to farthest node', '也是 0 m': 'Also 0 m',
+  '节点间同步': 'Inter-node sync', '不需要，也不可能': 'Unnecessary. Also impossible.',
+  '覆盖的国家和地区': 'Countries covered', '您所在的那一个': "Whichever one you're in",
+  '新增节点方式': 'How to add a node', '买一台电脑': 'Buy a computer',
+
+  '实时': 'Live', '本页面就是由 NoHop 分发的': 'This very page is served by NoHop',
+  '左边是您的浏览器刚刚收到的响应头。这一页从源站到您的屏幕，经过了 0 个路由器。右边可以现场测速，数据真实，结论荒谬。': 'On the left: the response headers your browser just received. This page traveled from origin to screen through exactly 0 routers. On the right: a live speed test. Real data, absurd conclusions.',
+  '正在向边缘节点请求响应头……': 'Requesting response headers from the edge node…',
+  '点击下方按钮，测量您到最近边缘节点的真实延迟。': 'Click below to measure your real latency to the nearest edge node.',
+  '开始测速': 'Run speed test',
+
+  '企业级能力，个人级覆盖范围': 'Enterprise-grade features. Personal-grade coverage.',
+  '每一项功能都经过了严格的工程验证，并且都可以在一句话内解释清楚它为什么成立。': 'Every feature has been rigorously engineered, and each one can be justified in a single sentence.',
+  '天然抗 DDoS': 'DDoS-proof by design',
+  '任何针对您节点的流量攻击都只能从您自己的机器发起。攻击者需要先成为您。': 'Any flood attack on your node has to originate from your own machine. To attack you, an attacker must first become you.',
+  '数据主权': 'Data sovereignty',
+  '您的数据从不离开您的设备。GDPR、数据本地化与跨境传输合规，全部天然满足。数据连您的房间都没出过。': "Your data never leaves your device. GDPR, data residency, cross-border transfer rules: all satisfied by default. Your data hasn't even left the room.",
+  '缓存失效': 'Cache invalidation',
+  '计算机科学两大难题之一。我们的解决方案是只保留一份数据，因此不存在不一致的副本。另一个难题（命名）我们也解决了：所有节点都叫 localhost。': 'One of the two hard problems in computer science. We solved it by keeping exactly one copy of everything. We solved the other one (naming) too: every node is called localhost.',
+  'AI 智能调度': 'AI-powered routing',
+  '由 1.27 万亿参数的大模型实时决策每一个请求的最优路由。它每次都选 127.0.0.1，准确率 100%，消耗 token 0。': 'A 1.27-trillion-parameter model picks the optimal route for every request in real time. It always picks 127.0.0.1. 100% accuracy. 0 tokens used.',
+  '比区块链更去中心化': 'More decentralized than blockchain',
+  '每个节点完全独立，彼此之间没有任何通信，甚至不知道对方存在。共识算法：1/1 节点同意即达成共识。': "Every node is fully independent, never talks to any other node, and doesn't know the others exist. Consensus algorithm: 1 of 1 nodes agree.",
+  '在离用户最近的位置运行任意代码。具体来说，就是在您的电脑上运行您的代码。我们称之为“边缘计算”，您可能称之为“运行”。': 'Run arbitrary code as close to the user as possible. Specifically: your code, on your computer. We call it "edge computing". You might call it "running it".',
+  '碳中和': 'Carbon neutral',
+  '数据传输距离 0 米，运输环节碳排放 0 克。您的电脑本身的耗电不在我们的统计范围内，这是行业惯例。': "Data travels 0 meters, so transport emissions are 0 g. Your computer's own power draw is outside our reporting scope, as is industry tradition.",
+  '零配置安全上下文': 'Zero-config secure context',
+  '浏览器将 localhost 视为安全上下文。Service Worker、剪贴板等 API 开箱即用，无需申请证书。这是真的，我们只是恰好在这里。': 'Browsers treat localhost as a secure context, so Service Workers, the Clipboard API and friends work out of the box with no certificate. This is true. We just happen to be here.',
+  '离线可用': 'Works offline',
+  '拔掉网线，NoHop 仍然正常工作。高铁过隧道、电梯里、山顶上、海底，均不受影响。我们可能是唯一一家在断网时更稳定的 CDN。': 'Pull the cable and NoHop keeps going. Subway tunnels, elevators, airplane mode, the bottom of the ocean. We may be the only CDN that gets more reliable when the internet goes down.',
+
+  '战略': 'Strategy', '我们的底层逻辑': 'Our first principles',
+  '投资人问我们的护城河是什么。我们是这样回答的：': "An investor asked about our moat. Here's what we told them:",
+  '翻译成人话：': 'In plain English:',
+  '我们在你电脑上开了个端口。': ' we opened a port on your computer.',
+
+  '延迟对比': 'Latency comparison',
+  '我们没有和任何竞品做对比，因为那不公平。下面是 NoHop 与光速的对比。': "We didn't benchmark against competitors. It wouldn't be fair. Here's NoHop versus the speed of light.",
+  '光往返地月一次': 'Light, Earth–Moon round trip', '约 38.4 万公里 × 2': '~384,000 km × 2',
+  '光绕地球赤道一圈': 'Light, once around the equator', '40,075 公里': '40,075 km',
+  '首字节时间，300 次请求': 'Time to first byte, 300 requests',
+  'NoHop 网络往返': 'NoHop network round trip',
+  'ping 127.0.0.1，20 个包，丢包率 0%': 'ping 127.0.0.1, 20 packets, 0% loss',
+  '您老板认为网站应有的速度': 'How fast your boss thinks the site should be',
+  '来源：周会': 'Source: the weekly sync',
+  'NoHop Next（研发中）': 'NoHop Next (in development)',
+  '在请求发出之前返回响应': 'Responds before the request is sent',
+  '测试环境：一台 Windows 11 笔记本，即本次测试中唯一的边缘节点。HTTP 延迟全部来自服务器自身的处理时间，网络传输贡献为 0。光需要 0 秒走完 0 米，因此 NoHop 与光速打平。我们正在努力把 P99 优化到 Node.js 启动之前。': "Test setup: one Windows 11 laptop, which was also the only edge node in the test. All HTTP latency is the server's own processing time; the network contributed exactly 0. Light takes 0 seconds to travel 0 meters, so NoHop ties the speed of light. We're working on getting P99 below Node.js startup time.",
+
+  '合规': 'Compliance', '行业最严苛的认证': "The industry's toughest certifications",
+  '所有认证均由权威机构颁发。权威机构由我们担任。': 'Every certification was issued by a recognized authority. The recognized authority is us.',
+  '环回信息安全管理体系': 'Loopback information security management',
+  '审计范围：一台电脑': 'Audit scope: one computer',
+  'GDPR 免检': 'GDPR-exempt', '数据从未离开过房间': 'Data has never left the room',
+  '图灵测试': 'Turing test', '未参加，因此从未失败': 'Never taken, so never failed',
+
+  '对比': 'Comparison', '为什么选择 NoHop': 'Why NoHop',
+  '我们尊重传统 CDN。它们解决了一个我们选择不去解决的问题。': 'We respect traditional CDNs. They solve a problem we chose not to solve.',
+  '传统 CDN': 'Traditional CDN', '数百个': 'Hundreds', '数十亿个': 'Billions',
+  '回源': 'Origin fetch', '需要': 'Required', '源站即边缘，边缘即源站': 'The origin is the edge. The edge is the origin.',
+  '缓存一致性': 'Cache consistency', '最终一致': 'Eventually consistent', '强一致（只有一份）': 'Strongly consistent (there is only one copy)',
+  '全球发布耗时': 'Global deploy time', '数秒到数分钟': 'Seconds to minutes',
+  '跨境合规': 'Cross-border compliance', '复杂': "It's complicated", '数据从不出门': 'Data never leaves the house',
+  '双十一高峰': 'Black Friday peak', '需要提前扩容': 'Capacity planning required', '您一个人能有多少流量': 'How much traffic can one person make?',
+  '断网时可用': 'Works offline', '否': 'No', '是': 'Yes',
+  '竞争对手': 'Competitors', '很多': 'Many', '没有（也没有客户）': 'None (also no customers)',
+  '其他人能访问您的内容': 'Other people can access your content',
+
+  '客户': 'Customers', '来自用户的声音': 'What our users say',
+  '以下评价均来自虚构的用户。真实用户只有一位，而且就是您。': "All testimonials below come from fictional users. There is exactly one real user, and it's you.",
+  '“迁移到 NoHop 之后，我们的 P99 延迟降到了 0。用户数也降到了 0。”': '"Since migrating to NoHop, our P99 latency dropped to zero. So did our user count."',
+  '某初创公司 CTO': 'CTO, stealth-mode startup',
+  '“我把公司官网部署上去，在我电脑上打开速度飞快。老板说他那边打不开，可能是他网不好。”': '"I deployed our company website and it loads blazing fast on my laptop. My boss says it won\'t open on their end. Probably their Wi-Fi."',
+  '某前端工程师（已离职）': 'Front-end engineer (no longer with the company)',
+  '“终于有一个 CDN 在高铁进隧道的时候也能正常工作了。”': '"Finally, a CDN that keeps working when my train goes into a tunnel."',
+  '某通勤开发者': 'Developer, daily commuter',
+  '“我不理解，但我大受震撼。”': '"I have no idea what this is. I\'m in."',
+  '某投资人（已投）': 'Investor (already wired the money)',
+  '“我们把降本增效做到了极致：带宽费 0，机房费 0，CDN 账单 0。业务收入也 0，但成本结构非常健康。”': '"We took cost optimization to its logical conclusion: $0 bandwidth, $0 data centers, $0 CDN bill. Revenue is also $0, but the unit economics are beautiful."',
+  '某公司财务总监': 'CFO, some company',
+  '“格局打开了。原来最近的节点一直在我身边。”': '"Mind blown. The nearest node was right beside me all along."',
+  '某在深夜顿悟的运维': 'SRE, enlightened at 3 a.m.',
+
+  '星际版': 'Interplanetary',
+  '地球到火星的单程光延迟是 3 到 22 分钟。任何星际 CDN 都必须面对这个物理极限。': 'One-way light delay from Earth to Mars is 3 to 22 minutes. Every interplanetary CDN has to face this physical limit.',
+  '除了我们。在 NoHop 星际网络中，火星用户访问火星节点的延迟同样是': 'Except us. On the NoHop Interplanetary Network, Martian users reach their Martian node in',
+  '。': '.',
+  '* 前提是用户本人及其电脑都在火星上。NoHop 不承担往返火星的交通费用。': '* Requires both the user and their computer to be on Mars. Round-trip travel to Mars not included.',
+
+  '简单透明的定价': 'Simple, transparent pricing',
+  '带宽不限量，上限取决于您的内存总线。': 'Unlimited bandwidth. The only cap is your memory bus.',
+  '个人版': 'Personal', '¥0': '$0', '/ 月': '/ mo', '/ 人 / 月': '/ user / mo',
+  '适合个人开发者与好奇的人。': 'For indie developers and the curious.',
+  '1 个专属边缘节点': '1 dedicated edge node', '不限带宽与请求数': 'Unlimited bandwidth and requests',
+  '全球分发（全球 = 您的电脑）': 'Global delivery (globe = your computer)', '社区支持（您自己）': 'Community support (you)',
+  '最受欢迎': 'Most popular', '团队版': 'Team', '每位成员都有自己的节点。': 'Every member gets their own node.',
+  '个人版全部功能': 'Everything in Personal', '每位成员 1 个专属边缘节点': '1 dedicated edge node per member',
+  '成员之间完全隔离，互相看不到对方的内容': "Members fully isolated: nobody can see anyone else's content",
+  '无需开协作会议，因为无法协作': 'No more collaboration meetings, because collaboration is impossible',
+  '企业版': 'Enterprise', '¥699': '$99', '与免费版功能完全相同。': 'Exactly the same features as the free plan.',
+  '团队版全部功能': 'Everything in Team', '一张写着“企业版”的 PDF 证书': 'A PDF certificate that says "Enterprise"',
+  '99.999% SLA（只要电脑开着）': '99.999% SLA (while your laptop is on)', '专属客户经理（您自己）': 'Dedicated account manager (you)',
+  '联系销售': 'Contact sales', '限量典藏': 'Limited edition', 'Pro Max Ultra 至尊版': 'Pro Max Ultra',
+  '¥6,999': '$999', '为发烧友打造的环回体验。': 'An audiophile-grade loopback experience.',
+  '一根 0 米长的镀金网线': 'A gold-plated, 0-meter network cable',
+  '无氧铜环回接口，数据音质更通透': 'Oxygen-free copper loopback for warmer, more transparent data',
+  '专属风水师调整电脑朝向以优化延迟': "A feng shui consultant to optimize your laptop's orientation for latency",
+  '每月一次上门重启服务': 'Monthly on-site reboot service', '尊享开通': 'Upgrade to Ultra',
+
+  '我们正在建设的未来': "The future we're building",
+  '路线图仅供参考，不构成任何承诺。尤其是第三项。': 'This roadmap is for reference only and is not a commitment. Especially item three.',
+  '负延迟：在请求发出前返回响应': 'Negative latency: respond before the request is sent', '研发中': 'In progress',
+  'NoHop 星际版：火星节点': 'NoHop Interplanetary: Mars node', '等一张火箭票': 'Awaiting a rocket ticket',
+  '支持 localhost 以外的访问': 'Access from outside localhost', '已取消：与公司愿景不符': 'Cancelled: not aligned with company vision',
+  '量子纠缠同步：解决一个不存在的同步问题': "Quantum-entangled sync: solving a sync problem that doesn't exist", '规划中': 'Planned',
+  '上市。估值方法：市梦率': 'IPO. Valuation method: price-to-dreams ratio', '已估完': 'Already valued',
+  '更新日志': 'Changelog',
+  '延迟从 0 ms 优化至 0 ms，性能提升 ∞%。': 'Latency optimized from 0 ms to 0 ms. Performance up ∞%.',
+  '新增 AI 智能调度。行为与之前完全一致，但现在是 AI 做的。': "Added AI-powered routing. Behavior is identical to before, but now it's AI.",
+  '移除了 0 个节点，新增了 0 个节点。': 'Removed 0 nodes. Added 0 nodes.',
+  '修复了内容可能被其他人访问到的 bug。': 'Fixed a bug where your content could be accessed by other people.',
+  '首次发布。全球同步上线，耗时 0 ms。': 'Initial release. Simultaneous global launch, completed in 0 ms.',
+
+  '常见问题': 'Questions',
+  '别人能访问我通过 NoHop 分发的内容吗？': 'Can other people access what I serve through NoHop?',
+  '不能。这是我们安全模型的核心，也是我们能做到 100% 缓存命中率和零 DDoS 风险的原因。这不是 bug，是 feature。': "No. This is the core of our security model, and the reason we achieve a 100% cache hit ratio and zero DDoS risk. It's not a bug, it's a feature.",
+  '用户反馈打不开怎么办？': "A user says the site won't load. What do I do?",
+  '请按照我们的标准客服流程处理：第一步，请用户清一下缓存再试试；第二步，请用户重启试试；第三步，告诉用户“在我电脑上是好的”。截至目前，该流程的问题关闭率为 100%。': 'Follow our standard support playbook. Step one: ask them to clear their cache. Step two: ask if they\'ve tried turning it off and on again. Step three: tell them "works on my machine". To date, this playbook has a 100% ticket closure rate.',
+  '我的电脑关机了怎么办？': 'What happens when my computer is off?',
+  '您的边缘节点会进入休眠。根据我们的 SLA，这不计为宕机，因为此时您的节点上也没有任何用户。薛定谔的节点，不看就不算挂。': "Your edge node goes to sleep. Per our SLA this isn't downtime, because there are no users on your node at that moment either. Schrödinger's node: if nobody's looking, it isn't down.",
+  'NoHop 和直接打开 localhost 有什么区别？': 'How is NoHop different from just opening localhost?',
+  '我们有落地页、状态页、定价页、路线图和一个客服机器人。另外，我们的响应头里写着': 'We have a landing page, a status page, a pricing page, a roadmap and a support bot. Also, our response headers say',
+  '。格局打开。': '. Think bigger.',
+  '你们用的是什么技术栈？': "What's your tech stack?",
+  'Node.js 自带的': 'The',
+  '模块。对外我们称之为“自研高性能边缘计算引擎”。': 'module that ships with Node.js. In investor decks we call it our "proprietary high-performance edge compute engine".',
+  '为什么是 127.0.0.0/8 而不是只用 127.0.0.1？': 'Why 127.0.0.0/8 instead of just 127.0.0.1?',
+  '整个 127.0.0.0/8 段都是环回地址，共 16,777,216 个。我们是全球唯一一家拥有完整 /8 段的 CDN。每一个用户都拥有它。': "The entire 127.0.0.0/8 block is loopback: 16,777,216 addresses. We're the only CDN in the world that owns a full /8. So does every one of our users.",
+  '支持 IPv6 吗？': 'Do you support IPv6?',
+  '支持。在 IPv6 下，您的边缘节点地址是': "Yes. On IPv6, your edge node's address is",
+  '。迁移到 IPv6 后，您的节点数量保持不变，地址变得更短了。这是我们第一次在地址长度上遥遥领先。': '. After migrating, your node count stays the same and your address gets shorter. It\'s the first time we\'ve ever led the industry in address length.',
+  '能抗住双十一吗？': 'Can it handle Black Friday?',
+  '能。双十一期间您的节点只服务您一个人，峰值 QPS 取决于您刷新页面的手速。': 'Yes. On Black Friday your node serves exactly one person, so peak QPS is limited only by how fast you can hit refresh.',
+  '如何清除缓存？': 'How do I purge the cache?',
+  '运行': 'Run',
+  '，全球缓存会在 0 ms 内清除完毕。由于我们从未缓存任何东西，这一操作没有任何效果，但它会让您感觉好一些。': " and the global cache is purged in 0 ms. Since we never cache anything, this does absolutely nothing, but it'll make you feel better.",
+  '这是一个笑话吗？': 'Is this a joke?',
+  '我们的法务团队建议我们不要回答这个问题。我们的法务团队也是您。': 'Our legal team has advised us not to answer that. Our legal team is also you.',
+
+  '© 2026 NoHop CDN。我们不传输数据，我们只是数据的原地不动工。': '© 2026 NoHop CDN. Data that goes nowhere, fast.',
+  '网络状态': 'Network status',
+  '· 隐私政策：我们拿不到您的任何数据 · 招聘：已满员（1/1）': "· Privacy policy: we can't get any of your data · Careers: fully staffed (1/1)",
+  '环ICP备127001号 · 本机网安备 00000000000001 号 · 本服务仅在 127.0.0.0/8 范围内提供': 'Loopback License No. 127001 · Local Network Security Filing No. 00000000000001 · Service available within 127.0.0.0/8 only',
+
+  'Cookie 提示': 'Cookie notice',
+  '本网站使用 cookie。': 'This site uses cookies.',
+  '它们存储在离您最近的节点上，也就是您的电脑里。和其他所有网站一样，但我们是唯一一个说实话的。': " They're stored on the node closest to you, which is your computer. Same as every other website, but we're the only ones honest about it.",
+  '接受': 'Accept', '接受（企业版）': 'Accept (Enterprise)',
+  '在线客服': 'Live support', 'NoHop 客服': 'NoHop Support', '● 在线 · 平均响应时间 0 ms': '● Online · Avg. response time 0 ms',
+}, {
+  jargon: 'NoHop <mark>leverages</mark> <mark>localhost</mark> as a <mark>strategic beachhead</mark> to <mark>disrupt</mark> the <mark>last zero miles</mark> of content delivery, building a <mark>closed-loop</mark>, <mark>edge-native</mark> <mark>flywheel</mark> in which data never leaves the device. By <mark>productizing loopback</mark> at <mark>byte-level granularity</mark>, we <mark>unlock synergies</mark> across every endpoint and <mark>10x</mark> both cost efficiency and user delight against a single <mark>north-star metric</mark>: zero.',
+});
+i18nToggle(document.getElementById('lang-btn'));
+</script>
+<script>
 (function () {
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -834,30 +1048,43 @@ footer .icp { font-size: 12.5px; }
   if (isPublic) {
     var ann = document.getElementById('announce');
     ann.className = 'announce incident';
-    ann.innerHTML = '⚠️ <b>重大事故</b>：本页面已离开作者的电脑，正在被分发给陌生人。受影响用户：您。 <a href="status.html" style="color:#fff">查看事故详情 →</a>';
+    ann.innerHTML = L(
+      '⚠️ <b>重大事故</b>：本页面已离开作者的电脑，正在被分发给陌生人。受影响用户：您。 <a href="status.html" style="color:#fff">查看事故详情 →</a>',
+      "⚠️ <b>Major incident</b>: this page has left the author's computer and is being served to strangers. Affected users: you. <a href=\"status.html\" style=\"color:#fff\">View incident →</a>");
     document.getElementById('public-box').hidden = false;
     document.getElementById('pb-host').textContent = host;
     document.getElementById('pb-cmd').textContent = (repoUrl
       ? '$ git clone ' + repoUrl + '\n$ cd ' + repoUrl.split('/').pop() + '\n'
-      : '') + '$ node bin/nohop-cdn.js site\n\n# 然后打开 http://127.0.0.1:8127';
+      : '') + '$ node bin/nohop-cdn.js site\n\n' + L('# 然后打开 http://127.0.0.1:8127', '# then open http://127.0.0.1:8127');
+  } else {
+    document.getElementById('announce').innerHTML = L(
+      '🎉 <b>NoHop 2.0 发布</b>：延迟从 0 ms 优化至 0 ms，性能提升 ∞%（0 ÷ 0）。',
+      '🎉 <b>NoHop 2.0 is here</b>: latency optimized from 0 ms to 0 ms. A ∞% improvement (0 ÷ 0).');
   }
 
   // 复制安装命令
   var btn = document.getElementById('copy');
   btn.addEventListener('click', function () {
-    var done = function () { btn.textContent = '已复制'; setTimeout(function () { btn.textContent = '复制'; }, 1500); };
+    var done = function () { btn.textContent = L('已复制', 'Copied'); setTimeout(function () { btn.textContent = L('复制', 'Copy'); }, 1500); };
     try { navigator.clipboard.writeText('npx nohop-cdn').then(done, function () {}); } catch (e) {}
   });
 
   // 轮播标语
-  var slogans = [
+  var slogans = L([
     'Works on my machine™，现在是一项企业级 SLA。',
     '我们不传输数据，我们只是数据的原地不动工。',
     '打通最后 0 公里。',
     '比光速更快？不，我们和光速打平。',
     '你的电脑，就是你的数据中心。',
     '不是在本地运行，是在边缘运行。',
-  ];
+  ], [
+    'Works on my machine™ — now an enterprise SLA.',
+    'Data that goes nowhere, fast.',
+    'Solving the last mile by making it zero miles.',
+    'Faster than light? No. Tied with it.',
+    'Your laptop is your data center now.',
+    "It's not running locally. It's running at the edge.",
+  ]);
   var rot = document.getElementById('rotator'), si = 0;
   if (!reduce) setInterval(function () { si = (si + 1) % slogans.length; rot.textContent = slogans[si]; }, 3200);
 
@@ -870,10 +1097,10 @@ footer .icp { font-size: 12.5px; }
     // 公网模式：滚动停下时显示本页真实经过公网传输的字节数
     var navEntry = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
     var bytes = navEntry && navEntry.transferSize;
-    finalTraffic = bytes ? (bytes / 1024).toFixed(1) + ' KB' : '不详（侥幸命中了缓存）';
-    finalHops = '0（今天没有省下）';
-    traffic.previousElementSibling.textContent = '本页刚刚在公网上传输了';
-    document.getElementById('t-uptime').previousElementSibling.textContent = '自您打开本页起事故已持续';
+    finalTraffic = bytes ? (bytes / 1024).toFixed(1) + ' KB' : L('不详（侥幸命中了缓存）', 'unknown (lucky cache hit)');
+    finalHops = L('0（今天没有省下）', '0 (none today)');
+    traffic.previousElementSibling.textContent = L('本页刚刚在公网上传输了', 'This page just traveled the public internet');
+    document.getElementById('t-uptime').previousElementSibling.textContent = L('自您打开本页起事故已持续', 'Incident ongoing since you opened this page');
     traffic.textContent = finalTraffic; hops.textContent = finalHops;
   }
   function spin() {
@@ -887,19 +1114,22 @@ footer .icp { font-size: 12.5px; }
   setTimeout(spin, 1200); setInterval(spin, 6000);
 
   var t0 = Date.now(), up = document.getElementById('t-uptime');
-  setInterval(function () { up.textContent = Math.floor((Date.now() - t0) / 1000).toLocaleString() + ' 秒'; }, 1000);
+  setInterval(function () { up.textContent = Math.floor((Date.now() - t0) / 1000).toLocaleString() + L(' 秒', ' s'); }, 1000);
 
   // 响应头
   var out = document.getElementById('headers');
   var esc = function (s) { return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); };
+  var cm = function (s) { return '<span class="c"># ' + s + '</span>'; };
   if (isFile) {
-    out.innerHTML = '<span class="c"># 您正在通过 file:// 直接打开本页面，未经 NoHop 加速。\n# 在项目目录运行以下命令，即可将本页分发到全球边缘网络：\n\n</span>$ node bin/nohop-cdn.js site';
+    out.innerHTML = '<span class="c">' + L(
+      '# 您正在通过 file:// 直接打开本页面，未经 NoHop 加速。\n# 在项目目录运行以下命令，即可将本页分发到全球边缘网络：',
+      '# You opened this page via file://, with zero NoHop acceleration.\n# Run this in the project folder to deliver it to the global edge network:') + '\n\n</span>$ node bin/nohop-cdn.js site';
   } else if (isPublic) {
     var p0 = performance.now();
     fetch(location.href, { method: 'HEAD', cache: 'no-store' }).then(function (res) {
       var ms = (performance.now() - p0).toFixed(1);
       var keys = ['server', 'x-cache', 'x-served-by', 'via', 'age', 'x-github-request-id', 'x-fastly-request-id', 'cf-cache-status', 'cf-ray', 'x-vercel-cache', 'x-vercel-id', 'x-nf-request-id'];
-      var lines = ['<span class="c">HTTP/' + '1.1 ' + res.status + '  ·  往返 ' + ms + ' ms（不是 0）</span>'];
+      var lines = ['<span class="c">HTTP/1.1 ' + res.status + '  ·  ' + L('往返 ' + ms + ' ms（不是 0）', 'round trip ' + ms + ' ms (not 0)') + '</span>'];
       keys.forEach(function (k) {
         var v = res.headers.get(k);
         if (v !== null) lines.push('<span class="k">' + esc(k) + '</span>: ' + esc(v));
@@ -910,41 +1140,45 @@ footer .icp { font-size: 12.5px; }
         : /cloudflare/.test(server) || g('cf-ray') ? 'Cloudflare'
         : g('x-vercel-id') ? 'Vercel'
         : /netlify/.test(server) || g('x-nf-request-id') ? 'Netlify'
-        : '一台陌生的服务器';
+        : null;
       lines.push('',
-        '<span class="c"># 本页面目前由竞争对手 ' + esc(who) + ' 分发。我们对此深表遗憾。</span>',
-        !g('x-cache') ? '<span class="c"># 对方甚至没有声明缓存命中。</span>'
-          : /miss/i.test(g('x-cache')) ? '<span class="c"># 对方的 x-cache 是 MISS。NoHop 成立至今从未 MISS 过。</span>'
-          : '<span class="c"># 对方的响应头里也写着 x-cache: HIT。但对方的服务器不是您的电脑。</span>',
+        cm(who
+          ? L('本页面目前由竞争对手 ' + esc(who) + ' 分发。我们对此深表遗憾。', 'This page is currently being served by our competitor, ' + esc(who) + '. We deeply regret this.')
+          : L('本页面目前由一台陌生的服务器分发。我们对此深表遗憾。', "This page is currently being served by a stranger's server. We deeply regret this.")),
+        !g('x-cache') ? cm(L('对方甚至没有声明缓存命中。', "They don't even claim a cache hit."))
+          : /miss/i.test(g('x-cache')) ? cm(L('对方的 x-cache 是 MISS。NoHop 成立至今从未 MISS 过。', 'Their x-cache says MISS. NoHop has never missed. Not once.'))
+          : cm(L('对方的响应头里也写着 x-cache: HIT。但对方的服务器不是您的电脑。', 'Their headers say x-cache: HIT too. But their server is not your computer.')),
         (function () {
           // x-served-by 形如 cache-icn1450084-ICN，末尾是机场代码
           var m = /-([A-Z]{3})$/.exec(g('x-served-by'));
-          if (!m) return '<span class="c"># 您的请求去了一个我们不知道的地方。NoHop 的请求从不出门。</span>';
-          var cities = { ICN: '首尔', NRT: '东京', HND: '东京', KIX: '大阪', HKG: '香港', TPE: '台北', SIN: '新加坡', SYD: '悉尼', BOM: '孟买', LAX: '洛杉矶', SJC: '圣何塞', SEA: '西雅图', IAD: '华盛顿', JFK: '纽约', ORD: '芝加哥', DFW: '达拉斯', FRA: '法兰克福', LHR: '伦敦', AMS: '阿姆斯特丹', CDG: '巴黎' };
-          var where = cities[m[1]] ? m[1] + '（' + cities[m[1]] + '）' : m[1];
-          return '<span class="c"># 您的请求刚刚去了一趟 ' + esc(where) + '。NoHop 的请求从不出门。</span>';
+          if (!m) return cm(L('您的请求去了一个我们不知道的地方。NoHop 的请求从不出门。', "Your request went somewhere we can't identify. NoHop requests never leave the house."));
+          var cities = L(
+            { ICN: '首尔', NRT: '东京', HND: '东京', KIX: '大阪', HKG: '香港', TPE: '台北', SIN: '新加坡', SYD: '悉尼', BOM: '孟买', LAX: '洛杉矶', SJC: '圣何塞', SEA: '西雅图', IAD: '华盛顿', JFK: '纽约', ORD: '芝加哥', DFW: '达拉斯', FRA: '法兰克福', LHR: '伦敦', AMS: '阿姆斯特丹', CDG: '巴黎' },
+            { ICN: 'Seoul', NRT: 'Tokyo', HND: 'Tokyo', KIX: 'Osaka', HKG: 'Hong Kong', TPE: 'Taipei', SIN: 'Singapore', SYD: 'Sydney', BOM: 'Mumbai', LAX: 'Los Angeles', SJC: 'San Jose', SEA: 'Seattle', IAD: 'Washington, D.C.', JFK: 'New York', ORD: 'Chicago', DFW: 'Dallas', FRA: 'Frankfurt', LHR: 'London', AMS: 'Amsterdam', CDG: 'Paris' });
+          var where = cities[m[1]] ? m[1] + L('（' + cities[m[1]] + '）', ' (' + cities[m[1]] + ')') : m[1];
+          return cm(L('您的请求刚刚去了一趟 ' + esc(where) + '。NoHop 的请求从不出门。', 'Your request just took a trip to ' + esc(where) + '. NoHop requests never leave the house.'));
         })(),
-        '<span class="c"># x-hops: 未知（大于 0，这就已经输了）</span>',
-        '<span class="c"># x-works-on-my-machine: 不再成立</span>');
+        cm(L('x-hops: 未知（大于 0，这就已经输了）', 'x-hops: unknown (greater than 0, so we already lost)')),
+        cm(L('x-works-on-my-machine: 不再成立', 'x-works-on-my-machine: no longer true')));
       out.innerHTML = lines.join('\n');
     }).catch(function () {
-      out.innerHTML = '<span class="c"># 连公网服务器也联系不上了。事故正在升级。</span>';
+      out.innerHTML = cm(L('连公网服务器也联系不上了。事故正在升级。', "Can't even reach the public server. The incident is escalating."));
     });
   } else {
     var h0 = performance.now();
     fetch(location.href, { method: 'HEAD', cache: 'no-store' }).then(function (res) {
       var ms = (performance.now() - h0).toFixed(1);
       var keys = ['server', 'x-cache', 'x-edge-location', 'x-edge-pop', 'x-hops', 'x-origin-distance', 'x-served-by', 'x-works-on-my-machine', 'x-ai-routing', 'x-carbon-emissions', 'x-latency-rank', 'x-speed-of-light', 'x-compliance', 'via'];
-      var lines = ['<span class="c">HTTP/1.1 ' + res.status + '  ·  往返 ' + ms + ' ms</span>'];
+      var lines = ['<span class="c">HTTP/1.1 ' + res.status + '  ·  ' + L('往返 ', 'round trip ') + ms + ' ms</span>'];
       var found = 0;
       keys.forEach(function (k) {
         var v = res.headers.get(k);
         if (v !== null) { found++; lines.push('<span class="k">' + esc(k) + '</span>: ' + esc(v)); }
       });
-      if (found < 3) lines.push('', '<span class="c"># 本页面似乎没有经过 NoHop 分发。您的内容可能已经离开了您的电脑。</span>');
+      if (found < 3) lines.push('', cm(L('本页面似乎没有经过 NoHop 分发。您的内容可能已经离开了您的电脑。', "This page doesn't seem to be served by NoHop. Your content may have left your computer.")));
       out.innerHTML = lines.join('\n');
     }).catch(function () {
-      out.innerHTML = '<span class="c"># 无法连接边缘节点。根据 SLA，这不算宕机。</span>';
+      out.innerHTML = cm(L('无法连接边缘节点。根据 SLA，这不算宕机。', "Can't reach the edge node. Per our SLA, this doesn't count as downtime."));
     });
   }
 
@@ -952,7 +1186,7 @@ footer .icp { font-size: 12.5px; }
   var gauge = document.getElementById('gauge'), verdict = document.getElementById('verdict'), run = document.getElementById('run-speed');
   run.addEventListener('click', function () {
     run.disabled = true;
-    verdict.textContent = '正在测量您到全球边缘网络的延迟……';
+    verdict.textContent = L('正在测量您到全球边缘网络的延迟……', 'Measuring your latency to the global edge network…');
     if (isPublic) {
       // 公网模式：测的是到托管服务器的真实往返时间
       var pt = [], pn = 10;
@@ -963,18 +1197,21 @@ footer .icp { font-size: 12.5px; }
           gauge.innerHTML = pt[pt.length - 1].toFixed(1) + ' <small>ms</small>';
           if (pt.length < pn) return pOnce();
           pt.sort(function (a, b) { return a - b; });
-          var med = pt[Math.floor(pn / 2)];
+          var med = pt[Math.floor(pn / 2)], msStr = med.toFixed(1);
           // 光在光纤中约 200 km/ms，往返除以 2
           var kmNum = Math.round(med / 2 * 200), km = kmNum.toLocaleString();
-          gauge.innerHTML = med.toFixed(1) + ' <small>ms</small>';
-          verdict.innerHTML = '<b style="color:#d97706">您落后于全国 0% 的用户。</b>您与本页面之间隔着 ' + med.toFixed(1) + ' ms 的真实世界。按光纤中的光速估算，服务器最远可能在 ' + km + ' 公里之外。'
-            // 地球表面两点间最远约 20,037 公里（半个赤道）
-            + (kmNum > 20037 ? '这比地球上任意两点之间的最远距离还远，我们怀疑服务器不在地球上。' : '')
-            + '使用 NoHop，这两个数字都会是 0。';
+          // 地球表面两点间最远约 20,037 公里（半个赤道）
+          var far = kmNum > 20037;
+          gauge.innerHTML = msStr + ' <small>ms</small>';
+          verdict.innerHTML = L(
+            '<b style="color:#d97706">您落后于全国 0% 的用户。</b>您与本页面之间隔着 ' + msStr + ' ms 的真实世界。按光纤中的光速估算，服务器最远可能在 ' + km + ' 公里之外。'
+              + (far ? '这比地球上任意两点之间的最远距离还远，我们怀疑服务器不在地球上。' : '') + '使用 NoHop，这两个数字都会是 0。',
+            '<b style="color:#d97706">You\'re slower than 0% of users in your country.</b>There are ' + msStr + ' ms of real world between you and this page. At the speed of light in fiber, the server could be up to ' + km + ' km away. '
+              + (far ? "That's farther apart than any two points on Earth, so we suspect the server isn't on Earth. " : '') + 'With NoHop, both numbers would be 0.');
           run.disabled = false;
-          run.textContent = '再测一次（不会变好的）';
+          run.textContent = L('再测一次（不会变好的）', "Run again (it won't get better)");
         }).catch(function () {
-          verdict.textContent = '测速失败。公网就是这样。';
+          verdict.textContent = L('测速失败。公网就是这样。', "Speed test failed. That's the public internet for you.");
           run.disabled = false;
         });
       })();
@@ -982,7 +1219,8 @@ footer .icp { font-size: 12.5px; }
     }
     if (!viaNoHop) {
       gauge.innerHTML = '0 <small>ms</small>';
-      verdict.innerHTML = '<b>理论值：0 ms</b>本页未经 NoHop 分发，无法实测。但我们对理论值非常有信心。';
+      verdict.innerHTML = L('<b>理论值：0 ms</b>本页未经 NoHop 分发，无法实测。但我们对理论值非常有信心。',
+        "<b>Theoretical: 0 ms</b>This page isn't served by NoHop, so we can't measure. But we're extremely confident in the theory.");
       run.disabled = false;
       return;
     }
@@ -996,11 +1234,12 @@ footer .icp { font-size: 12.5px; }
         times.sort(function (a, b) { return a - b; });
         var med = times[Math.floor(n / 2)];
         gauge.innerHTML = med.toFixed(2) + ' <small>ms</small>';
-        verdict.innerHTML = '<b>您的速度击败了全国 100% 的用户！</b>参与排名用户：1 位。网络部分耗时 0 ms，其余为浏览器在思考人生。';
+        verdict.innerHTML = L('<b>您的速度击败了全国 100% 的用户！</b>参与排名用户：1 位。网络部分耗时 0 ms，其余为浏览器在思考人生。',
+          "<b>You're faster than 100% of users in your country!</b>Users ranked: 1. Network time: 0 ms. The rest is your browser contemplating its life choices.");
         run.disabled = false;
-        run.textContent = '再测一次';
+        run.textContent = L('再测一次', 'Run again');
       }).catch(function () {
-        verdict.textContent = '边缘节点没有响应。根据 SLA，这不算宕机。';
+        verdict.textContent = L('边缘节点没有响应。根据 SLA，这不算宕机。', "The edge node didn't respond. Per our SLA, this doesn't count as downtime.");
         run.disabled = false;
       });
     })();
@@ -1008,7 +1247,9 @@ footer .icp { font-size: 12.5px; }
 
   // Cookie 横幅
   var cookie = document.getElementById('cookie');
-  if (isPublic) cookie.querySelector('p').innerHTML = '<b>本网站使用 cookie。</b>好消息是，即使本页面已经被部署到了公网，cookie 仍然存储在您的电脑里。这是本网站目前唯一没有出事故的部分。';
+  if (isPublic) cookie.querySelector('p').innerHTML = L(
+    '<b>本网站使用 cookie。</b>好消息是，即使本页面已经被部署到了公网，cookie 仍然存储在您的电脑里。这是本网站目前唯一没有出事故的部分。',
+    "<b>This site uses cookies.</b> Good news: even though this page has been deployed to the public internet, your cookies are still stored on your computer. It's currently the only part of this site that isn't having an incident.");
   var seen = false;
   try { seen = localStorage.getItem('nohop-cookie') === '1'; } catch (e) {}
   if (!seen) setTimeout(function () { cookie.classList.add('show'); }, 1500);
@@ -1019,9 +1260,10 @@ footer .icp { font-size: 12.5px; }
     });
   });
 
-  // 客服机器人
+  // 客服机器人：选项文字同时也是下一步的键
   var chat = document.getElementById('chat'), body = document.getElementById('chat-body'), opts = document.getElementById('chat-opts');
-  var script = {
+  var RESTART = L('重新开始', 'Start over');
+  var script = L({
     start: { bot: '您好，我是 NoHop 客服，也是您。请问有什么可以帮您？', opts: ['网站打不开', '延迟太高', '我要投诉', '转人工'] },
     '网站打不开': { bot: '请清一下缓存再试试。', opts: ['还是打不开'] },
     '还是打不开': { bot: '请重启试试。', opts: ['重启了还是不行'] },
@@ -1030,18 +1272,30 @@ footer .icp { font-size: 12.5px; }
     '延迟太高': { bot: '经检测，您的网络延迟为 0 ms。如您仍感到慢，可能是您的心理延迟，建议休息一下。', opts: ['我要投诉', '转人工'] },
     '我要投诉': { bot: '好的，已为您提交投诉。投诉将被发送至离您最近的处理中心：您自己。预计处理时间 0 ms。', opts: ['转人工'] },
     '转人工': { bot: '正在为您转接人工客服……<br>已接通。人工客服是：您。', opts: ['重新开始'] },
-    '重新开始': null,
     '为什么页面在出事故': { bot: '作者执行了 git push。这是一个人的错误，却影响了所有访客。我们正在努力把本页面送回作者的电脑。', opts: ['什么时候修好', '转人工'] },
     '什么时候修好': { bot: '当您把本网站下载到自己的电脑上时，对您来说事故就修好了。这也是我们唯一的修复方案。', opts: ['转人工', '重新开始'] },
-  };
-  if (isPublic) script.start = { bot: '您好，我是 NoHop 客服。检测到您正在通过公网访问本页面，人工客服（您）对此也无能为力。请问有什么可以帮您？', opts: ['为什么页面在出事故', '网站打不开', '延迟太高', '转人工'] };
+  }, {
+    start: { bot: "Hi, I'm NoHop Support. I'm also you. How can I help?", opts: ["The site won't load", 'Latency is too high', 'I want to complain', 'Talk to a human'] },
+    "The site won't load": { bot: 'Have you tried clearing your cache?', opts: ["Still won't load"] },
+    "Still won't load": { bot: 'Have you tried turning it off and on again?', opts: ['Rebooted. Still broken.'] },
+    'Rebooted. Still broken.': { bot: 'Works on my machine.', opts: ['…', 'Talk to a human'] },
+    '…': { bot: 'Thank you for your patience. Your issue has been marked as resolved.', opts: ['I want to complain'] },
+    'Latency is too high': { bot: 'We measured your network latency at 0 ms. If it still feels slow, that may be your psychological latency. We recommend a nap.', opts: ['I want to complain', 'Talk to a human'] },
+    'I want to complain': { bot: 'Done. Your complaint has been routed to the processing center nearest you: you. Estimated resolution time: 0 ms.', opts: ['Talk to a human'] },
+    'Talk to a human': { bot: 'Transferring you to a human agent…<br>Connected. Your human agent is: you.', opts: ['Start over'] },
+    'Why is the site having an incident?': { bot: "The author ran git push. One person's mistake, affecting every visitor. We're working to get this page back onto the author's computer.", opts: ['When will it be fixed?', 'Talk to a human'] },
+    'When will it be fixed?': { bot: "The incident is resolved for you the moment you download this site onto your own computer. It's our only remediation plan.", opts: ['Talk to a human', 'Start over'] },
+  });
+  if (isPublic) script.start = L(
+    { bot: '您好，我是 NoHop 客服。检测到您正在通过公网访问本页面，人工客服（您）对此也无能为力。请问有什么可以帮您？', opts: ['为什么页面在出事故', '网站打不开', '延迟太高', '转人工'] },
+    { bot: "Hi, I'm NoHop Support. I see you're visiting over the public internet. Unfortunately our human agent (you) can't fix that either. How can I help?", opts: ['Why is the site having an incident?', "The site won't load", 'Latency is too high', 'Talk to a human'] });
   function say(cls, html) {
     var d = document.createElement('div');
     d.className = 'cm ' + cls; d.innerHTML = html;
     body.appendChild(d); body.scrollTop = body.scrollHeight;
   }
   function step(key) {
-    if (key === '重新开始') { body.innerHTML = ''; key = 'start'; }
+    if (key === RESTART) { body.innerHTML = ''; key = 'start'; }
     var s = script[key];
     opts.innerHTML = '';
     setTimeout(function () {
@@ -1063,14 +1317,18 @@ footer .icp { font-size: 12.5px; }
   // 切走标签页时
   var title = document.title;
   document.addEventListener('visibilitychange', function () {
-    document.title = document.hidden ? (isPublic ? '事故仍在进行中' : '你的边缘节点想你了') : title;
+    document.title = document.hidden
+      ? (isPublic ? L('事故仍在进行中', 'Incident still ongoing') : L('你的边缘节点想你了', 'Your edge node misses you'))
+      : title;
   });
 
   // 给打开控制台的人
   console.log('%cNoHop CDN', 'font-size:28px;font-weight:800;color:#2f6bff');
   console.log(isPublic
-    ? '如果你能看到这条消息，说明你按了 F12，而且你正在公网上看这个页面。\n恭喜，你已被录用为 NoHop 事故响应工程师。\n第一项任务：把本网站下载到你的电脑上。'
-    : '如果你能看到这条消息，说明你按了 F12。\n恭喜，你已被录用为 NoHop 边缘节点运维工程师。\n入职地点：你现在坐的位置。通勤时间：0 ms。');
+    ? L('如果你能看到这条消息，说明你按了 F12，而且你正在公网上看这个页面。\n恭喜，你已被录用为 NoHop 事故响应工程师。\n第一项任务：把本网站下载到你的电脑上。',
+        "If you can read this, you pressed F12, and you're viewing this page over the public internet.\nCongratulations, you've been hired as a NoHop Incident Response Engineer.\nYour first task: download this website onto your own computer.")
+    : L('如果你能看到这条消息，说明你按了 F12。\n恭喜，你已被录用为 NoHop 边缘节点运维工程师。\n入职地点：你现在坐的位置。通勤时间：0 ms。',
+        "If you can read this, you pressed F12.\nCongratulations, you've been hired as a NoHop Edge Node Reliability Engineer.\nOffice location: where you're sitting right now. Commute: 0 ms."));
 })();
 </script>
 </body>

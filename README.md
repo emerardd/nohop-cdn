@@ -2,6 +2,8 @@
 
 全球唯一一个距离每位用户 0 米的内容分发网络。
 
+*The only CDN that is 0 meters from every user. The site, status page and brand film are available in English: add `?lang=en` or use the toggle in the top-right corner.*
+
 NoHop 在每一台设备上都部署了边缘节点。无论用户身在何处，他们访问的永远是离自己最近的节点：他们自己的电脑。
 
 > ⚠️ 本网站已被部署到公网：http://blog.emerard.me/nohop-cdn/ 。这是 NoHop 成立以来第一起影响他人的事故。

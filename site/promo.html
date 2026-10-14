@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NoHop 宣传片</title>
 <meta name="description" content="NoHop CDN 品牌宣传片：距离每位用户 0 米的内容分发网络。">
+<script src="i18n.js"></script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%232f6bff' stroke-width='3'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%232f6bff'/%3E%3C/svg%3E">
 <style>
 /* 宣传片固定为深色电影画面，不随系统主题切换 */
@@ -175,6 +176,10 @@ body.idle { cursor: none; }
 #track { flex: 1; height: 4px; background: rgba(255,255,255,.2); border-radius: 2px; overflow: hidden; }
 #fill { height: 100%; width: 0; background: #fff; }
 #time { font-variant-numeric: tabular-nums; min-width: 84px; text-align: right; opacity: .85; }
+#cover .lang-btn { position: absolute; top: 16px; right: 16px; font: inherit; font-size: 13px; font-weight: 700; padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.06); color: #fff; cursor: pointer; }
+/* 英文比中文宽，个别大字号场景收一点 */
+html[lang="en"] .quote { font-size: 92px; }
+html[lang="en"] .avatar { font-size: 96px; }
 #back { color: #fff; opacity: .7; text-decoration: none; font-size: 13px; white-space: nowrap; }
 </style>
 </head>
@@ -337,7 +342,7 @@ body.idle { cursor: none; }
     <div class="wordmark" style="font-size:120px">NoHop</div>
     <div class="install mono a" style="--d:1.8s"><span class="p">$ </span>npx nohop-cdn</div>
     <div class="wotm a" style="--d:2.6s">Works on my machine™</div>
-    <p class="fine a fadein" style="--d:3.9s">* NoHop 仅在 127.0.0.0/8 范围内提供服务。其他人无法访问您通过 NoHop 分发的内容，这是一个特性。0 ms 延迟数据来自作者笔记本上的 ping 127.0.0.1。“性能提升 ∞%”系 0 除以 0 的结果。投资人评价为虚构，其震撼程度为真实。本片中的用户增长曲线为真实数据。TAM 与 SAM 大小相同不是排版错误。估值按市梦率计算，不构成任何投资建议。资金用途为“无”，因为确实没有需要花钱的地方。过往表现（0 ms）不代表未来表现（也是 0 ms）。NoHop 不承担往返火星的交通费用。</p>
+    <p class="fine a fadein" style="--d:3.9s" data-i18n="fine">* NoHop 仅在 127.0.0.0/8 范围内提供服务。其他人无法访问您通过 NoHop 分发的内容，这是一个特性。0 ms 延迟数据来自作者笔记本上的 ping 127.0.0.1。“性能提升 ∞%”系 0 除以 0 的结果。投资人评价为虚构，其震撼程度为真实。本片中的用户增长曲线为真实数据。TAM 与 SAM 大小相同不是排版错误。估值按市梦率计算，不构成任何投资建议。资金用途为“无”，因为确实没有需要花钱的地方。过往表现（0 ms）不代表未来表现（也是 0 ms）。NoHop 不承担往返火星的交通费用。</p>
   </section>
 
   <div id="flash"></div>
@@ -346,6 +351,7 @@ body.idle { cursor: none; }
 </div>
 
 <div id="cover">
+  <button class="lang-btn" type="button" id="lang-btn">EN</button>
   <div class="inner">
     <button class="play" type="button" aria-label="播放宣传片"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l15 8-15 8z"/></svg></button>
     <h1>NoHop · 品牌宣传片</h1>
@@ -362,6 +368,7 @@ body.idle { cursor: none; }
   <a id="back" href="index.html">返回官网</a>
 </div>
 
+<script src="promo-en.js"></script>
 <script>
 (function () {
   var DURATION = 94;
@@ -424,7 +431,8 @@ body.idle { cursor: none; }
   }
 
   // ---------- S9 头衔轮换 ----------
-  var roles = ['创始人', 'CEO', 'CTO', '首席架构师', '运维', '客服', '法务', '财务', '唯一用户'];
+  var roles = L(['创始人', 'CEO', 'CTO', '首席架构师', '运维', '客服', '法务', '财务', '唯一用户'],
+    ['Founder', 'CEO', 'CTO', 'Chief Architect', 'DevOps', 'Support', 'Legal', 'Finance', 'Only user']);
   var roleEl = document.getElementById('role');
   function tickRole(local) {
     var idx = Math.max(0, Math.min(roles.length - 1, Math.floor((local - .8) / .55)));
@@ -634,15 +642,15 @@ body.idle { cursor: none; }
     else if (p) fallbackPausedAt = performance.now();
     else fallbackStart += performance.now() - fallbackPausedAt;
     pp.innerHTML = p ? ICON.play : ICON.pause;
-    pp.setAttribute('aria-label', p ? '播放' : '暂停');
+    pp.setAttribute('aria-label', p ? L('播放', 'Play') : L('暂停', 'Pause'));
   }
   function finish() {
     playing = false;
     cover.classList.add('ended');
-    cover.querySelector('h1').textContent = 'NoHop · 距离每位用户 0 米';
-    cover.querySelector('p').textContent = '点击重新播放 · 或者，回到离您最近的节点';
+    cover.querySelector('h1').textContent = L('NoHop · 距离每位用户 0 米', 'NoHop · 0 meters from every user');
+    cover.querySelector('p').textContent = L('点击重新播放 · 或者，回到离您最近的节点', 'Click to replay · or head back to the node nearest you');
     cover.querySelector('.play').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v5h5"/></svg>';
-    cover.querySelector('.play').setAttribute('aria-label', '重新播放');
+    cover.querySelector('.play').setAttribute('aria-label', L('重新播放', 'Replay'));
     cover.style.display = 'grid';
     if (ctx) setTimeout(function () { try { ctx.close(); } catch (e) {} ctx = null; }, 500);
   }

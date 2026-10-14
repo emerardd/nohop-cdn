@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NoHop Status</title>
 <meta name="description" content="NoHop CDN 全球网络状态。">
+<script src="i18n.js"></script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%2316a34a' stroke-width='3'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%2316a34a'/%3E%3C/svg%3E">
 <style>
 :root {
@@ -101,6 +102,7 @@ h2 { font-size: 15px; color: var(--muted); font-weight: 600; margin: 40px 0 12px
 .incident p { margin: 0; color: var(--muted); font-size: 15px; }
 .tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 999px; background: var(--ok-soft); color: var(--ok); margin-left: 6px; vertical-align: 2px; }
 
+.lang-btn { font: inherit; font-size: 13px; font-weight: 700; padding: 5px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--text); cursor: pointer; margin-left: 12px; }
 footer { color: var(--muted); font-size: 13px; padding: 40px 0 56px; }
 </style>
 </head>
@@ -112,7 +114,7 @@ footer { color: var(--muted); font-size: 13px; padding: 40px 0 56px; }
       <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="16" cy="16" r="4" fill="#16a34a"/></svg>
       NoHop Status
     </a>
-    <a class="back" href="index.html">返回官网</a>
+    <div><a class="back" href="index.html">返回官网</a><button class="lang-btn" type="button" id="lang-btn">EN</button></div>
   </header>
 
   <div class="banner" id="banner">
@@ -188,7 +190,7 @@ footer { color: var(--muted); font-size: 13px; padding: 40px 0 56px; }
     <div class="incident" id="public-incident" hidden>
       <time>2026-10-14 · 至今</time>
       <h3>本页面被部署到公网<span class="tag live">进行中</span></h3>
-      <p>作者执行了 <code>git push</code>。本页面离开了作者的电脑，目前正由第三方服务器分发给陌生人。这是 NoHop 成立以来第一起影响他人的事故。<b>受影响用户：</b>您。<b>临时缓解措施：</b>把本网站下载到您自己的电脑上。<b>根因：</b>作者想让朋友们也看看。</p>
+      <p data-i18n="pub">作者执行了 <code>git push</code>。本页面离开了作者的电脑，目前正由第三方服务器分发给陌生人。这是 NoHop 成立以来第一起影响他人的事故。<b>受影响用户：</b>您。<b>临时缓解措施：</b>把本网站下载到您自己的电脑上。<b>根因：</b>作者想让朋友们也看看。</p>
     </div>
     <div class="incident">
       <time>2026-10-01</time>
@@ -208,7 +210,7 @@ footer { color: var(--muted); font-size: 13px; padding: 40px 0 56px; }
     <div class="incident">
       <time>2026-07-22</time>
       <h3>端口冲突<span class="tag">已解决</span></h3>
-      <p>用户在同一台边缘节点上运行了 <code>npm run dev</code>，引发了两个 CDN 争夺同一个端口的商战。已通过“关掉另一个”解决。</p>
+      <p data-i18n="port">用户在同一台边缘节点上运行了 <code>npm run dev</code>，引发了两个 CDN 争夺同一个端口的商战。已通过“关掉另一个”解决。</p>
     </div>
     <div class="incident">
       <time>2026-06-17</time>
@@ -218,7 +220,7 @@ footer { color: var(--muted); font-size: 13px; padding: 40px 0 56px; }
     <div class="incident">
       <time>2026-05-09</time>
       <h3>边缘节点意外终止<span class="tag">已解决</span></h3>
-      <p>一只猫从键盘上走过，按下了 Ctrl+C。<b>根因分析：</b>猫。<b>改进措施：</b>无，我们无法改进猫。</p>
+      <p data-i18n="cat">一只猫从键盘上走过，按下了 Ctrl+C。<b>根因分析：</b>猫。<b>改进措施：</b>无，我们无法改进猫。</p>
     </div>
     <div class="incident">
       <time>2026-04-01</time>
@@ -245,6 +247,58 @@ footer { color: var(--muted); font-size: 13px; padding: 40px 0 56px; }
 </div>
 
 <script>
+i18nApply({
+  '返回官网': 'Back to homepage',
+  '所有系统运行正常': 'All systems operational',
+  '全球 1/1 个区域在线 · 这是本页面唯一会显示的状态': '1/1 regions online worldwide · This is the only status this page will ever show',
+  '实时指标': 'Live metrics',
+  '节点运行时长': 'Node uptime', '已处理请求': 'Requests served', '缓存命中率': 'Cache hit ratio', '路由跳数': 'Router hops',
+  '正在连接边缘节点……': 'Connecting to edge node…',
+  '组件 · 过去 90 天': 'Components · last 90 days',
+  '边缘节点 LOCALHOST-1': 'Edge node LOCALHOST-1', '你的电脑': 'Your computer',
+  '运行正常': 'Operational',
+  '90 天前': '90 days ago', '今天': 'Today',
+  '可用率 100.000%（休眠不计入）': 'Uptime 100.000% (sleep excluded)', '可用率 100.000%': 'Uptime 100.000%',
+  '回源': 'Origin fetch', '源站与边缘为同一台设备': 'Origin and edge are the same device',
+  '由 hosts 文件提供': 'Provided by your hosts file',
+  'AI 智能调度': 'AI-powered routing',
+  '本季度共做出决策 0 次，每次都是 127.0.0.1': '0 decisions made this quarter, every one of them 127.0.0.1',
+  '准确率 100.000%': 'Accuracy 100.000%',
+  '区块链共识层': 'Blockchain consensus layer', '1/1 个节点同意': '1 of 1 nodes agree', '已达成共识': 'Consensus reached',
+  '跨区域复制': 'Cross-region replication', '只有一个区域': 'There is only one region', '不适用': 'N/A',
+  '负延迟引擎': 'Negative latency engine', '预计在您提出需求之前上线': "Expected to ship before you ask for it", '研发中': 'In development',
+
+  '历史事件': 'Past incidents',
+  '2026-10-14 · 至今': '2026-10-14 · ongoing',
+  '本页面被部署到公网': 'This page was deployed to the public internet', '进行中': 'Ongoing',
+  '已解决': 'Resolved', '符合设计': 'Working as intended',
+  '国庆期间全球流量归零': 'Global traffic dropped to zero over the holiday',
+  '监控显示 LOCALHOST-1 连续 7 天请求数为 0。经排查，唯一的用户出去玩了。节点运行完全正常，只是很孤独。': 'Monitoring showed 0 requests on LOCALHOST-1 for 7 consecutive days. Investigation found that the only user had gone on vacation. The node was fully operational, just lonely.',
+  '边缘节点休眠': 'Edge node hibernation',
+  '用户合上了笔记本盖子，LOCALHOST-1 进入休眠约 7 小时。期间无用户受到影响，因为唯一的用户在睡觉。': 'The user closed their laptop lid and LOCALHOST-1 hibernated for about 7 hours. No users were affected, because the only user was asleep.',
+  '计划外重启': 'Unplanned restart',
+  '上游供应商推送了系统更新，边缘节点在未提前通知的情况下重启。我们已与该供应商沟通，对方尚未回复。': 'An upstream vendor pushed an OS update and restarted the edge node without notice. We have reached out to the vendor. They have not replied.',
+  '端口冲突': 'Port conflict',
+  '部分用户无法从其他设备访问内容': "Some users can't access content from other devices",
+  '经调查，此行为符合预期。用户的手机拥有自己的边缘节点，该节点上没有部署任何内容。': "After investigation, this is expected behavior. The user's phone has its own edge node, and nothing is deployed on it.",
+  '边缘节点意外终止': 'Edge node terminated unexpectedly',
+  '延迟异常升高至 0.3 ms': 'Latency spiked to 0.3 ms',
+  '有用户报告延迟比平时高出 0.3 ms。经调查，用户在测速的同时在下载 120 GB 的游戏。我们已建议用户在测速时专心测速。': 'A user reported latency 0.3 ms higher than usual. Investigation found they were downloading a 120 GB game during the speed test. We have advised the user to focus on one thing at a time.',
+  '数据中心液体泄漏': 'Liquid spill in the data center',
+  '用户将一杯美式咖啡洒在了边缘节点上。我们借此机会完成了数据中心的首次液冷改造。键盘 F 键至今仍有些粘。': "The user spilled an iced Americano on the edge node. We used the opportunity to complete the data center's first liquid-cooling retrofit. The F key is still a little sticky.",
+
+  '订阅状态更新': 'Subscribe to updates',
+  '邮箱': 'Email', '订阅': 'Subscribe',
+  '事故通知将投递到离您最近的邮箱服务器。': 'Incident notifications are delivered to the mail server nearest you.',
+  '本页面每次刷新都会重新检查全球所有节点，耗时约 0 ms。': 'This page re-checks every node on Earth on every refresh. It takes about 0 ms.',
+}, {
+  pub: 'The author ran <code>git push</code>. This page left the author\'s computer and is now being served to strangers by a third-party server. This is the first incident in NoHop history to affect anyone else. <b>Affected users:</b> you. <b>Mitigation:</b> download this website onto your own computer. <b>Root cause:</b> the author wanted their friends to see it.',
+  port: 'The user ran <code>npm run dev</code> on the same edge node, setting off a turf war between two CDNs over a single port. Resolved by closing the other one.',
+  cat: 'A cat walked across the keyboard and pressed Ctrl+C. <b>Root cause:</b> cat. <b>Action items:</b> none. We cannot improve the cat.',
+}, 'NoHop Status');
+i18nToggle(document.getElementById('lang-btn'));
+</script>
+<script>
 (function () {
   // 绿色条纹：每天一格。灰色格子表示电脑关机的日子，按 SLA 不计入可用率。
   var host = location.hostname;
@@ -255,9 +309,9 @@ footer { color: var(--muted); font-size: 13px; padding: 40px 0 56px; }
     var skip = sleepDays[el.dataset.bars] || [];
     for (var i = 0; i < 90; i++) {
       var s = document.createElement('span');
-      if (skip.indexOf(i) !== -1) { s.className = 'sleep'; s.title = '休眠（不计入）'; }
-      else if (isPublic && i === 89 && el.dataset.bars === 'edge') { s.className = 'warn'; s.title = '事故：本页面被部署到公网'; }
-      else s.title = '运行正常';
+      if (skip.indexOf(i) !== -1) { s.className = 'sleep'; s.title = L('休眠（不计入）', 'Asleep (not counted)'); }
+      else if (isPublic && i === 89 && el.dataset.bars === 'edge') { s.className = 'warn'; s.title = L('事故：本页面被部署到公网', 'Incident: this page was deployed to the public internet'); }
+      else s.title = L('运行正常', 'Operational');
       el.appendChild(s);
     }
   });
@@ -265,16 +319,20 @@ footer { color: var(--muted); font-size: 13px; padding: 40px 0 56px; }
   if (isPublic) {
     var banner = document.getElementById('banner');
     banner.className = 'banner warn';
-    banner.innerHTML = '<span aria-hidden="true">!</span><div>部分降级：本页面正在被陌生人访问<small>全球 1/1 个区域在线，但这个区域不是您的电脑 · 我们曾说过这是本页面唯一会显示的状态，对此我们深表歉意</small></div>';
+    banner.innerHTML = '<span aria-hidden="true">!</span><div>' + L(
+      '部分降级：本页面正在被陌生人访问<small>全球 1/1 个区域在线，但这个区域不是您的电脑 · 我们曾说过这是本页面唯一会显示的状态，对此我们深表歉意</small>',
+      "Partial degradation: this page is being viewed by strangers<small>1/1 regions online, but that region isn't your computer · We previously said this was the only status this page would ever show. We apologize.</small>") + '</div>';
     document.getElementById('public-incident').hidden = false;
     var edgeOk = document.querySelector('.comp .ok');
-    edgeOk.textContent = '不在您身边';
+    edgeOk.textContent = L('不在您身边', 'Not near you');
     edgeOk.style.color = '#d97706';
   }
 
   document.getElementById('sub').addEventListener('submit', function (e) {
     e.preventDefault();
-    document.getElementById('sub-msg').textContent = '订阅成功。由于本页永远只会显示“运行正常”，您将不会收到任何邮件。';
+    document.getElementById('sub-msg').textContent = L(
+      '订阅成功。由于本页永远只会显示“运行正常”，您将不会收到任何邮件。',
+      'Subscribed. Since this page will only ever say "operational", you will never receive an email.');
   });
 
   var note = document.getElementById('live-note');
@@ -283,24 +341,26 @@ footer { color: var(--muted); font-size: 13px; padding: 40px 0 56px; }
     return h ? h + 'h ' + m + 'm' : m ? m + 'm ' + s + 's' : s + 's';
   };
   if (isPublic && location.protocol !== 'file:') {
-    note.textContent = '实时指标不可用：为您提供本页面的服务器不是 NoHop 边缘节点，我们无法读取竞争对手的数据。';
-    document.getElementById('m-uptime').textContent = '不详';
-    document.getElementById('m-req').textContent = '不详';
-    document.getElementById('m-hit').textContent = '不详';
+    note.textContent = L(
+      '实时指标不可用：为您提供本页面的服务器不是 NoHop 边缘节点，我们无法读取竞争对手的数据。',
+      "Live metrics unavailable: the server delivering this page isn't a NoHop edge node, and we can't read our competitor's data.");
+    ['m-uptime', 'm-req', 'm-hit'].forEach(function (id) { document.getElementById(id).textContent = L('不详', 'Unknown'); });
     document.querySelectorAll('.metric b')[3].textContent = '>0';
     return;
   }
   if (location.protocol === 'file:') {
-    note.textContent = '实时指标需要通过 NoHop 访问本页。运行 node bin/nohop-cdn.js site 后打开 http://127.0.0.1:8127/status.html。';
+    note.textContent = L(
+      '实时指标需要通过 NoHop 访问本页。运行 node bin/nohop-cdn.js site 后打开 http://127.0.0.1:8127/status.html。',
+      'Live metrics require viewing this page through NoHop. Run node bin/nohop-cdn.js site, then open http://127.0.0.1:8127/status.html.');
     return;
   }
   fetch('/__nohop/status', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
     document.getElementById('m-uptime').textContent = fmt(d.uptime_seconds);
     document.getElementById('m-req').textContent = d.requests.toLocaleString();
     document.getElementById('m-hit').textContent = Math.round(d.cache_hit_ratio * 100) + '%';
-    note.textContent = '数据来自 ' + location.host + '/__nohop/status，距离您 0 米。';
+    note.textContent = L('数据来自 ' + location.host + '/__nohop/status，距离您 0 米。', 'Data from ' + location.host + '/__nohop/status, 0 meters from you.');
   }).catch(function () {
-    note.textContent = '无法连接边缘节点。根据 SLA，这不算宕机。';
+    note.textContent = L('无法连接边缘节点。根据 SLA，这不算宕机。', "Can't reach the edge node. Per our SLA, this doesn't count as downtime.");
   });
 })();
 </script>

@@ -25,30 +25,43 @@ a { display: inline-block; margin-top: 24px; color: var(--accent); font-weight: 
 <body>
 <main>
   <div class="code">404</div>
-  <h1>该资源在全球 1 个节点上均不存在</h1>
-  <p>我们动用了全部算力，搜索了整个地球（您的电脑），没有找到您要的东西。</p>
+  <h1 id="h">该资源在全球 1 个节点上均不存在</h1>
+  <p id="p">我们动用了全部算力，搜索了整个地球（您的电脑），没有找到您要的东西。</p>
   <div class="log" id="log"></div>
   <a href="/" id="home">← 返回离您最近的首页（0 米）</a>
 </main>
 <script>
 (function () {
+  // 404 页面可能出现在任意深度的路径下，相对路径加载不到 i18n.js，所以这里内联一份简化的语言判断
+  var lang = null;
+  try { var q = new URLSearchParams(location.search).get('lang'); if (q === 'en' || q === 'zh') lang = q; } catch (e) {}
+  if (!lang) { try { lang = localStorage.getItem('nohop-lang'); } catch (e) {} }
+  if (lang !== 'en' && lang !== 'zh') lang = /^zh/i.test(navigator.language || '') ? 'zh' : 'en';
+  var L = function (zh, en) { return lang === 'en' ? en : zh; };
+  document.documentElement.lang = L('zh-CN', 'en');
+  document.getElementById('h').textContent = L('该资源在全球 1 个节点上均不存在', 'This resource does not exist on any of our 1 nodes worldwide');
+  document.getElementById('p').textContent = L('我们动用了全部算力，搜索了整个地球（您的电脑），没有找到您要的东西。', "We threw all our compute at it and searched the entire Earth (your computer). We couldn't find what you're looking for.");
+
   var host = location.hostname;
   var isPublic = !(host === 'localhost' || /\.localhost$/.test(host) || /^127\./.test(host) || host === '[::1]' || host === '::1');
+  var home = document.getElementById('home');
+  home.textContent = L('← 返回离您最近的首页（0 米）', '← Back to the homepage nearest you (0 m)');
   if (isPublic) {
     // GitHub Pages 项目站点挂在 /nohop-cdn/ 下，首页链接要带上这一段
-    if (/^\/nohop-cdn(\/|$)/.test(location.pathname)) document.getElementById('home').href = '/nohop-cdn/';
-    document.getElementById('home').textContent = '← 返回首页（距离不详，肯定不是 0 米）';
+    if (/^\/nohop-cdn(\/|$)/.test(location.pathname)) home.href = '/nohop-cdn/';
+    home.textContent = L('← 返回首页（距离不详，肯定不是 0 米）', '← Back to homepage (distance unknown, definitely not 0 m)');
   }
+  var skipped = L('（跳过：这里没有你）', "(skipped: you're not here)");
   var lines = [
-    ['正在搜索 亚洲 节点……', ''],
-    ['正在搜索 欧洲 节点……', '（跳过：这里没有你）'],
-    ['正在搜索 美洲 节点……', '（跳过：这里没有你）'],
-    ['正在搜索 LOCALHOST-1……', ''],
-    ['正在检查回收站……', ''],
-    ['正在检查桌面上名为“新建文件夹 (3)”的文件夹……', ''],
-    ['', '<span class="no">✗ 未找到。</span>建议：清一下缓存再试试。'],
+    [L('正在搜索 亚洲 节点……', 'Searching Asia…'), ''],
+    [L('正在搜索 欧洲 节点……', 'Searching Europe…'), skipped],
+    [L('正在搜索 美洲 节点……', 'Searching the Americas…'), skipped],
+    [L('正在搜索 LOCALHOST-1……', 'Searching LOCALHOST-1…'), ''],
+    [L('正在检查回收站……', 'Checking the Recycle Bin…'), ''],
+    [L('正在检查桌面上名为“新建文件夹 (3)”的文件夹……', 'Checking the desktop folder named "New folder (3)"…'), ''],
+    ['', L('<span class="no">✗ 未找到。</span>建议：清一下缓存再试试。', '<span class="no">✗ Not found.</span> Suggestion: clear your cache and try again.')],
   ];
-  if (isPublic) lines.splice(6, 0, ['正在搜索 ' + host + '……', '（这不是您的电脑，搜索结果不可信）']);
+  if (isPublic) lines.splice(6, 0, [L('正在搜索 ', 'Searching ') + host + L('……', '…'), L('（这不是您的电脑，搜索结果不可信）', '(not your computer, results unreliable)')]);
   var log = document.getElementById('log');
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var i = 0;
