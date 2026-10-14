@@ -964,9 +964,12 @@ footer .icp { font-size: 12.5px; }
           pt.sort(function (a, b) { return a - b; });
           var med = pt[Math.floor(pn / 2)];
           // 光在光纤中约 200 km/ms，往返除以 2
-          var km = Math.round(med / 2 * 200).toLocaleString();
+          var kmNum = Math.round(med / 2 * 200), km = kmNum.toLocaleString();
           gauge.innerHTML = med.toFixed(1) + ' <small>ms</small>';
-          verdict.innerHTML = '<b style="color:#d97706">您落后于全国 0% 的用户。</b>您与本页面之间隔着 ' + med.toFixed(1) + ' ms 的真实世界。按光纤中的光速估算，服务器最远可能在 ' + km + ' 公里之外。使用 NoHop，这两个数字都会是 0。';
+          verdict.innerHTML = '<b style="color:#d97706">您落后于全国 0% 的用户。</b>您与本页面之间隔着 ' + med.toFixed(1) + ' ms 的真实世界。按光纤中的光速估算，服务器最远可能在 ' + km + ' 公里之外。'
+            // 地球表面两点间最远约 20,037 公里（半个赤道）
+            + (kmNum > 20037 ? '这比地球上任意两点之间的最远距离还远，我们怀疑服务器不在地球上。' : '')
+            + '使用 NoHop，这两个数字都会是 0。';
           run.disabled = false;
           run.textContent = '再测一次（不会变好的）';
         }).catch(function () {
