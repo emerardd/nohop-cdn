@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NoHop Status</title>
+<meta name="description" content="NoHop CDN 全球网络状态。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%2316a34a' stroke-width='3'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%2316a34a'/%3E%3C/svg%3E">
+<style>
+:root {
+  --bg: #fbfbfd;
+  --surface: #ffffff;
+  --text: #11131a;
+  --muted: #5d6273;
+  --line: #e3e5ec;
+  --ok: #16a34a;
+  --ok-soft: #e6f6ec;
+  --sleep: #c9cdd8;
+  --warn: #d97706;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b0d14;
+    --surface: #151926;
+    --text: #eceef5;
+    --muted: #9aa0b4;
+    --line: #242a3a;
+    --ok: #4ade80;
+    --ok-soft: #12261a;
+    --sleep: #3a4154;
+    --warn: #fbbf24;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b0d14;
+  --surface: #151926;
+  --text: #eceef5;
+  --muted: #9aa0b4;
+  --line: #242a3a;
+  --ok: #4ade80;
+  --ok-soft: #12261a;
+  --sleep: #3a4154;
+  --warn: #fbbf24;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  line-height: 1.6;
+}
+.mono { font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, monospace; }
+.wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+header { padding: 40px 0 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.logo { display: flex; align-items: center; gap: 8px; font-weight: 700; text-decoration: none; color: inherit; }
+.logo svg { width: 22px; height: 22px; }
+header a.back { color: var(--muted); font-size: 14px; }
+
+.banner { background: var(--ok); color: #fff; border-radius: 12px; padding: 18px 22px; font-weight: 600; font-size: 18px; display: flex; align-items: center; gap: 12px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .banner { color: #06210f; } }
+:root[data-theme="dark"] .banner { color: #06210f; }
+.banner small { display: block; font-weight: 400; font-size: 14px; opacity: .85; }
+#banner.warn { background: #d97706; color: #fff; }
+.bars span.warn { background: #d97706; }
+.tag.live { background: #fdecd3; color: #b45309; }
+[hidden] { display: none !important; }
+
+h2 { font-size: 15px; color: var(--muted); font-weight: 600; margin: 40px 0 12px; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.comp { padding: 18px 20px; border-bottom: 1px solid var(--line); }
+.comp:last-child { border-bottom: 0; }
+.comp-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.comp-name { font-weight: 600; }
+.comp-name small { display: block; color: var(--muted); font-weight: 400; font-size: 13px; }
+.ok { color: var(--ok); font-size: 14px; font-weight: 600; white-space: nowrap; }
+
+.bars { display: flex; gap: 2px; height: 30px; margin-top: 14px; }
+.bars span { flex: 1; border-radius: 2px; background: var(--ok); }
+.bars span.sleep { background: var(--sleep); }
+.bars-foot { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; margin-top: 6px; }
+
+.metrics { display: grid; grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 600px) { .metrics { grid-template-columns: repeat(4, 1fr); } }
+.metric { padding: 16px 20px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.metric:nth-child(2n) { border-right: 0; }
+@media (min-width: 600px) {
+  .metric { border-bottom: 0; }
+  .metric:nth-child(2n) { border-right: 1px solid var(--line); }
+  .metric:last-child { border-right: 0; }
+}
+.metric b { display: block; font-size: 22px; font-variant-numeric: tabular-nums; }
+.metric span { color: var(--muted); font-size: 13px; }
+.live-note { color: var(--muted); font-size: 13px; margin: 10px 2px 0; }
+
+.incident { padding: 18px 20px; border-bottom: 1px solid var(--line); }
+.incident:last-child { border-bottom: 0; }
+.incident time { color: var(--muted); font-size: 13px; }
+.incident h3 { margin: 4px 0 6px; font-size: 16px; }
+.incident p { margin: 0; color: var(--muted); font-size: 15px; }
+.tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 999px; background: var(--ok-soft); color: var(--ok); margin-left: 6px; vertical-align: 2px; }
+
+footer { color: var(--muted); font-size: 13px; padding: 40px 0 56px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <a class="logo" href="index.html">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="16" cy="16" r="4" fill="#16a34a"/></svg>
+      NoHop Status
+    </a>
+    <a class="back" href="index.html">返回官网</a>
+  </header>
+
+  <div class="banner" id="banner">
+    <span aria-hidden="true">✓</span>
+    <div>所有系统运行正常<small>全球 1/1 个区域在线 · 这是本页面唯一会显示的状态</small></div>
+  </div>
+
+  <h2>实时指标</h2>
+  <div class="card metrics">
+    <div class="metric"><b id="m-uptime">—</b><span>节点运行时长</span></div>
+    <div class="metric"><b id="m-req">—</b><span>已处理请求</span></div>
+    <div class="metric"><b id="m-hit">100%</b><span>缓存命中率</span></div>
+    <div class="metric"><b>0</b><span>路由跳数</span></div>
+  </div>
+  <p class="live-note" id="live-note">正在连接边缘节点……</p>
+
+  <h2>组件 · 过去 90 天</h2>
+  <div class="card">
+    <div class="comp">
+      <div class="comp-head">
+        <div class="comp-name">边缘节点 LOCALHOST-1<small>你的电脑</small></div>
+        <span class="ok">运行正常</span>
+      </div>
+      <div class="bars" data-bars="edge"></div>
+      <div class="bars-foot"><span>90 天前</span><span>可用率 100.000%（休眠不计入）</span><span>今天</span></div>
+    </div>
+    <div class="comp">
+      <div class="comp-head">
+        <div class="comp-name">回源<small>源站与边缘为同一台设备</small></div>
+        <span class="ok">运行正常</span>
+      </div>
+      <div class="bars" data-bars="origin"></div>
+      <div class="bars-foot"><span>90 天前</span><span>可用率 100.000%</span><span>今天</span></div>
+    </div>
+    <div class="comp">
+      <div class="comp-head">
+        <div class="comp-name">DNS<small>由 hosts 文件提供</small></div>
+        <span class="ok">运行正常</span>
+      </div>
+      <div class="bars" data-bars="dns"></div>
+      <div class="bars-foot"><span>90 天前</span><span>可用率 100.000%</span><span>今天</span></div>
+    </div>
+    <div class="comp">
+      <div class="comp-head">
+        <div class="comp-name">AI 智能调度<small>本季度共做出决策 0 次，每次都是 127.0.0.1</small></div>
+        <span class="ok">运行正常</span>
+      </div>
+      <div class="bars" data-bars="ai"></div>
+      <div class="bars-foot"><span>90 天前</span><span>准确率 100.000%</span><span>今天</span></div>
+    </div>
+    <div class="comp">
+      <div class="comp-head">
+        <div class="comp-name">区块链共识层<small>1/1 个节点同意</small></div>
+        <span class="ok">已达成共识</span>
+      </div>
+    </div>
+    <div class="comp">
+      <div class="comp-head">
+        <div class="comp-name">跨区域复制<small>只有一个区域</small></div>
+        <span class="ok">不适用</span>
+      </div>
+    </div>
+    <div class="comp">
+      <div class="comp-head">
+        <div class="comp-name">负延迟引擎<small>预计在您提出需求之前上线</small></div>
+        <span class="ok" style="color:var(--muted)">研发中</span>
+      </div>
+    </div>
+  </div>
+
+  <h2>历史事件</h2>
+  <div class="card">
+    <div class="incident" id="public-incident" hidden>
+      <time>2026-10-14 · 至今</time>
+      <h3>本页面被部署到公网<span class="tag live">进行中</span></h3>
+      <p>作者执行了 <code>git push</code>。本页面离开了作者的电脑，目前正由第三方服务器分发给陌生人。这是 NoHop 成立以来第一起影响他人的事故。<b>受影响用户：</b>您。<b>临时缓解措施：</b>把本网站下载到您自己的电脑上。<b>根因：</b>作者想让朋友们也看看。</p>
+    </div>
+    <div class="incident">
+      <time>2026-10-01</time>
+      <h3>国庆期间全球流量归零<span class="tag">已解决</span></h3>
+      <p>监控显示 LOCALHOST-1 连续 7 天请求数为 0。经排查，唯一的用户出去玩了。节点运行完全正常，只是很孤独。</p>
+    </div>
+    <div class="incident">
+      <time>2026-09-28</time>
+      <h3>边缘节点休眠<span class="tag">已解决</span></h3>
+      <p>用户合上了笔记本盖子，LOCALHOST-1 进入休眠约 7 小时。期间无用户受到影响，因为唯一的用户在睡觉。</p>
+    </div>
+    <div class="incident">
+      <time>2026-08-03</time>
+      <h3>计划外重启<span class="tag">已解决</span></h3>
+      <p>上游供应商推送了系统更新，边缘节点在未提前通知的情况下重启。我们已与该供应商沟通，对方尚未回复。</p>
+    </div>
+    <div class="incident">
+      <time>2026-07-22</time>
+      <h3>端口冲突<span class="tag">已解决</span></h3>
+      <p>用户在同一台边缘节点上运行了 <code>npm run dev</code>，引发了两个 CDN 争夺同一个端口的商战。已通过“关掉另一个”解决。</p>
+    </div>
+    <div class="incident">
+      <time>2026-06-17</time>
+      <h3>部分用户无法从其他设备访问内容<span class="tag">符合设计</span></h3>
+      <p>经调查，此行为符合预期。用户的手机拥有自己的边缘节点，该节点上没有部署任何内容。</p>
+    </div>
+    <div class="incident">
+      <time>2026-05-09</time>
+      <h3>边缘节点意外终止<span class="tag">已解决</span></h3>
+      <p>一只猫从键盘上走过，按下了 Ctrl+C。<b>根因分析：</b>猫。<b>改进措施：</b>无，我们无法改进猫。</p>
+    </div>
+    <div class="incident">
+      <time>2026-04-01</time>
+      <h3>延迟异常升高至 0.3 ms<span class="tag">已解决</span></h3>
+      <p>有用户报告延迟比平时高出 0.3 ms。经调查，用户在测速的同时在下载 120 GB 的游戏。我们已建议用户在测速时专心测速。</p>
+    </div>
+    <div class="incident">
+      <time>2026-03-15</time>
+      <h3>数据中心液体泄漏<span class="tag">已解决</span></h3>
+      <p>用户将一杯美式咖啡洒在了边缘节点上。我们借此机会完成了数据中心的首次液冷改造。键盘 F 键至今仍有些粘。</p>
+    </div>
+  </div>
+
+  <h2>订阅状态更新</h2>
+  <div class="card" style="padding:18px 20px">
+    <form id="sub" style="display:flex;gap:8px;flex-wrap:wrap">
+      <input type="email" placeholder="you@localhost" aria-label="邮箱" style="flex:1;min-width:180px;font:inherit;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text)">
+      <button type="submit" style="font:inherit;font-weight:600;padding:8px 16px;border:0;border-radius:8px;background:var(--ok);color:#fff;cursor:pointer">订阅</button>
+    </form>
+    <p id="sub-msg" style="margin:10px 0 0;color:var(--muted);font-size:14px">事故通知将投递到离您最近的邮箱服务器。</p>
+  </div>
+
+  <footer>本页面每次刷新都会重新检查全球所有节点，耗时约 0 ms。</footer>
+</div>
+
+<script>
+(function () {
+  // 绿色条纹：每天一格。灰色格子表示电脑关机的日子，按 SLA 不计入可用率。
+  var host = location.hostname;
+  var isPublic = !(location.protocol === 'file:' || host === 'localhost' || /\.localhost$/.test(host) || /^127\./.test(host) || host === '[::1]' || host === '::1');
+
+  var sleepDays = { edge: [4, 5, 31, 32, 61, 62, 63, 84] };
+  document.querySelectorAll('[data-bars]').forEach(function (el) {
+    var skip = sleepDays[el.dataset.bars] || [];
+    for (var i = 0; i < 90; i++) {
+      var s = document.createElement('span');
+      if (skip.indexOf(i) !== -1) { s.className = 'sleep'; s.title = '休眠（不计入）'; }
+      else if (isPublic && i === 89 && el.dataset.bars === 'edge') { s.className = 'warn'; s.title = '事故：本页面被部署到公网'; }
+      else s.title = '运行正常';
+      el.appendChild(s);
+    }
+  });
+
+  if (isPublic) {
+    var banner = document.getElementById('banner');
+    banner.className = 'banner warn';
+    banner.innerHTML = '<span aria-hidden="true">!</span><div>部分降级：本页面正在被陌生人访问<small>全球 1/1 个区域在线，但这个区域不是您的电脑 · 我们曾说过这是本页面唯一会显示的状态，对此我们深表歉意</small></div>';
+    document.getElementById('public-incident').hidden = false;
+    var edgeOk = document.querySelector('.comp .ok');
+    edgeOk.textContent = '不在您身边';
+    edgeOk.style.color = '#d97706';
+  }
+
+  document.getElementById('sub').addEventListener('submit', function (e) {
+    e.preventDefault();
+    document.getElementById('sub-msg').textContent = '订阅成功。由于本页永远只会显示“运行正常”，您将不会收到任何邮件。';
+  });
+
+  var note = document.getElementById('live-note');
+  var fmt = function (sec) {
+    var h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), s = sec % 60;
+    return h ? h + 'h ' + m + 'm' : m ? m + 'm ' + s + 's' : s + 's';
+  };
+  if (isPublic && location.protocol !== 'file:') {
+    note.textContent = '实时指标不可用：为您提供本页面的服务器不是 NoHop 边缘节点，我们无法读取竞争对手的数据。';
+    document.getElementById('m-uptime').textContent = '不详';
+    document.getElementById('m-req').textContent = '不详';
+    document.getElementById('m-hit').textContent = '不详';
+    document.querySelectorAll('.metric b')[3].textContent = '>0';
+    return;
+  }
+  if (location.protocol === 'file:') {
+    note.textContent = '实时指标需要通过 NoHop 访问本页。运行 node bin/nohop-cdn.js site 后打开 http://127.0.0.1:8127/status.html。';
+    return;
+  }
+  fetch('/__nohop/status', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
+    document.getElementById('m-uptime').textContent = fmt(d.uptime_seconds);
+    document.getElementById('m-req').textContent = d.requests.toLocaleString();
+    document.getElementById('m-hit').textContent = Math.round(d.cache_hit_ratio * 100) + '%';
+    note.textContent = '数据来自 ' + location.host + '/__nohop/status，距离您 0 米。';
+  }).catch(function () {
+    note.textContent = '无法连接边缘节点。根据 SLA，这不算宕机。';
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>404 · NoHop</title>
+<style>
+:root { --bg: #fbfbfd; --surface: #fff; --text: #11131a; --muted: #5d6273; --line: #e3e5ec; --accent: #2f6bff; --ok: #16a34a; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #0b0d14; --surface: #151926; --text: #eceef5; --muted: #9aa0b4; --line: #242a3a; --accent: #6d97ff; --ok: #4ade80; }
+}
+:root[data-theme="dark"] { --bg: #0b0d14; --surface: #151926; --text: #eceef5; --muted: #9aa0b4; --line: #242a3a; --accent: #6d97ff; --ok: #4ade80; }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; line-height: 1.65; padding: 32px 16px; }
+main { max-width: 560px; width: 100%; }
+.code { font-size: clamp(64px, 18vw, 120px); font-weight: 800; letter-spacing: -.04em; line-height: 1; color: var(--accent); }
+h1 { font-size: clamp(22px, 4vw, 28px); margin: 16px 0 8px; }
+p { color: var(--muted); margin: 0 0 24px; }
+.log { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; font-family: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace; font-size: 13.5px; min-height: 190px; white-space: pre-wrap; }
+.log .ok { color: var(--ok); }
+.log .no { color: #e11d48; }
+a { display: inline-block; margin-top: 24px; color: var(--accent); font-weight: 600; text-decoration: none; }
+</style>
+</head>
+<body>
+<main>
+  <div class="code">404</div>
+  <h1>该资源在全球 1 个节点上均不存在</h1>
+  <p>我们动用了全部算力，搜索了整个地球（您的电脑），没有找到您要的东西。</p>
+  <div class="log" id="log"></div>
+  <a href="/" id="home">← 返回离您最近的首页（0 米）</a>
+</main>
+<script>
+(function () {
+  var host = location.hostname;
+  var isPublic = !(host === 'localhost' || /\.localhost$/.test(host) || /^127\./.test(host) || host === '[::1]' || host === '::1');
+  if (isPublic) {
+    // GitHub Pages 项目站点挂在 /<仓库名>/ 下，首页链接要带上这一段
+    if (/\.github\.io$/.test(host)) {
+      var seg = location.pathname.split('/')[1];
+      if (seg) document.getElementById('home').href = '/' + seg + '/';
+    }
+    document.getElementById('home').textContent = '← 返回首页（距离不详，肯定不是 0 米）';
+  }
+  var lines = [
+    ['正在搜索 亚洲 节点……', ''],
+    ['正在搜索 欧洲 节点……', '（跳过：这里没有你）'],
+    ['正在搜索 美洲 节点……', '（跳过：这里没有你）'],
+    ['正在搜索 LOCALHOST-1……', ''],
+    ['正在检查回收站……', ''],
+    ['正在检查桌面上名为“新建文件夹 (3)”的文件夹……', ''],
+    ['', '<span class="no">✗ 未找到。</span>建议：清一下缓存再试试。'],
+  ];
+  if (isPublic) lines.splice(6, 0, ['正在搜索 ' + host + '……', '（这不是您的电脑，搜索结果不可信）']);
+  var log = document.getElementById('log');
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var i = 0;
+  (function next() {
+    if (i >= lines.length) return;
+    var l = lines[i++];
+    log.innerHTML += (l[0] ? l[0] + ' ' : '') + (l[1] || '<span class="ok">0ms</span>') + '\n';
+    reduce ? next() : setTimeout(next, 260);
+  })();
+})();
+</script>
+</body>
+</html>

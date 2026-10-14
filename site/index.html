@@ -1,0 +1,1067 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NoHop CDN</title>
+<meta name="description" content="全球唯一一个距离每位用户 0 米的内容分发网络。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%232f6bff' stroke-width='3'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%232f6bff'/%3E%3C/svg%3E">
+<style>
+:root {
+  --bg: #fbfbfd;
+  --bg-alt: #f2f3f7;
+  --surface: #ffffff;
+  --text: #11131a;
+  --muted: #5d6273;
+  --line: #e3e5ec;
+  --accent: #2f6bff;
+  --accent-soft: #e8efff;
+  --ok: #16a34a;
+  --ok-soft: #e6f6ec;
+  --gold: #b7791f;
+  --gold-soft: #fbf3e2;
+  --code-bg: #0f1220;
+  --code-text: #e6e9f5;
+  --shadow: 0 1px 2px rgba(17,19,26,.04), 0 8px 24px rgba(17,19,26,.06);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b0d14;
+    --bg-alt: #11141d;
+    --surface: #151926;
+    --text: #eceef5;
+    --muted: #9aa0b4;
+    --line: #242a3a;
+    --accent: #6d97ff;
+    --accent-soft: #18213b;
+    --ok: #4ade80;
+    --ok-soft: #12261a;
+    --gold: #f2c46d;
+    --gold-soft: #2a2314;
+    --code-bg: #070910;
+    --code-text: #e6e9f5;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b0d14;
+  --bg-alt: #11141d;
+  --surface: #151926;
+  --text: #eceef5;
+  --muted: #9aa0b4;
+  --line: #242a3a;
+  --accent: #6d97ff;
+  --accent-soft: #18213b;
+  --ok: #4ade80;
+  --ok-soft: #12261a;
+  --gold: #f2c46d;
+  --gold-soft: #2a2314;
+  --code-bg: #070910;
+  --code-text: #e6e9f5;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 72px; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  line-height: 1.65;
+  font-size: 16px;
+}
+code, pre, .mono { font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, monospace; }
+a { color: inherit; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+@media (min-width: 640px) { .wrap { padding: 0 32px; } }
+
+/* announcement */
+.announce { background: var(--code-bg); color: var(--code-text); font-size: 13px; text-align: center; padding: 8px 16px; }
+.announce b { color: #8fb0ff; }
+.announce.incident { background: #b42318; color: #fff; }
+.announce.incident b { color: #fff; }
+
+/* public mode */
+[hidden] { display: none !important; }
+.public-box { border: 2px solid #d97706; background: color-mix(in srgb, #d97706 8%, var(--surface)); border-radius: 16px; padding: 24px; margin-bottom: 40px; }
+.public-box h3 { margin: 0 0 8px; font-size: 19px; }
+.public-box p { margin: 0 0 14px; color: var(--muted); }
+.public-box pre { margin: 0; background: var(--code-bg); color: var(--code-text); border-radius: 10px; padding: 14px 16px; font-size: 13.5px; overflow-x: auto; }
+
+/* nav */
+nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+nav .wrap { display: flex; align-items: center; gap: 24px; height: 60px; }
+.logo { display: flex; align-items: center; gap: 8px; font-weight: 700; letter-spacing: -.01em; text-decoration: none; }
+.logo svg { width: 22px; height: 22px; }
+.nav-links { display: none; gap: 22px; font-size: 14px; color: var(--muted); margin-left: 8px; }
+.nav-links a { text-decoration: none; }
+.nav-links a:hover { color: var(--text); }
+@media (min-width: 820px) { .nav-links { display: flex; } }
+.nav-cta { margin-left: auto; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid transparent; cursor: pointer; font-family: inherit; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-ghost { border-color: var(--line); background: var(--surface); color: var(--text); }
+.btn-gold { background: var(--gold); color: #1a1205; }
+
+/* hero */
+.hero { padding: 64px 0 48px; text-align: center; }
+.badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.badge { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border-radius: 999px; background: var(--ok-soft); color: var(--ok); font-size: 13px; font-weight: 600; }
+.badge.blue { background: var(--accent-soft); color: var(--accent); }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.hero h1 { font-size: clamp(32px, 6vw, 56px); line-height: 1.15; letter-spacing: -.02em; margin: 22px auto 18px; max-width: 14em; text-wrap: balance; }
+.hero h1 em { font-style: normal; color: var(--accent); }
+.hero p.lead { color: var(--muted); font-size: clamp(16px, 2.2vw, 19px); max-width: 36em; margin: 0 auto 10px; }
+.rotator { color: var(--text); font-weight: 600; min-height: 1.65em; margin: 0 auto 30px; font-size: clamp(15px, 2vw, 17px); }
+.install { display: inline-flex; align-items: center; gap: 12px; background: var(--code-bg); color: var(--code-text); padding: 12px 14px 12px 18px; border-radius: 10px; font-size: 15px; max-width: 100%; }
+.install .prompt { color: #7f88a8; }
+.install button { background: #232842; color: var(--code-text); border: 0; border-radius: 6px; padding: 6px 10px; font-size: 12px; cursor: pointer; font-family: inherit; }
+.hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 16px; }
+
+/* logo wall */
+.logos { margin: 8px 0 40px; text-align: center; }
+.logos p { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+.logo-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 32px; color: var(--muted); opacity: .85; }
+.logo-row span { font-size: 16px; white-space: nowrap; }
+.logo-row span:nth-child(1) { font-weight: 800; letter-spacing: .04em; }
+.logo-row span:nth-child(2) { font-family: Georgia, serif; font-style: italic; }
+.logo-row span:nth-child(3) { font-weight: 300; letter-spacing: .2em; }
+.logo-row span:nth-child(4) { font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+.logo-row span:nth-child(5) { font-family: ui-monospace, Consolas, monospace; }
+.logo-row span:nth-child(6) { font-weight: 600; border: 1.5px solid currentColor; padding: 0 6px; border-radius: 4px; }
+
+/* stats */
+.stats { display: grid; grid-template-columns: repeat(2, 1fr); border: 1px solid var(--line); border-radius: 14px; background: var(--surface); overflow: hidden; }
+@media (min-width: 800px) { .stats { grid-template-columns: repeat(4, 1fr); } }
+.stat { padding: 24px 20px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.stat:nth-child(2n) { border-right: 0; }
+@media (min-width: 800px) {
+  .stat { border-bottom: 0; }
+  .stat:nth-child(2n) { border-right: 1px solid var(--line); }
+  .stat:last-child { border-right: 0; }
+}
+.stat b { display: block; font-size: clamp(26px, 4vw, 34px); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.stat span { color: var(--muted); font-size: 14px; }
+
+/* ticker */
+.ticker { display: grid; gap: 1px; grid-template-columns: 1fr; margin-top: 16px; background: var(--line); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+@media (min-width: 800px) { .ticker { grid-template-columns: repeat(3, 1fr); } }
+.tick { background: var(--surface); padding: 16px 20px; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.tick span { color: var(--muted); font-size: 14px; }
+.tick b { font-variant-numeric: tabular-nums; font-size: 18px; }
+
+/* sections */
+section { padding: 80px 0 0; }
+.eyebrow { color: var(--accent); font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+h2 { font-size: clamp(26px, 4vw, 36px); line-height: 1.25; letter-spacing: -.015em; margin: 8px 0 14px; text-wrap: balance; }
+.sub { color: var(--muted); max-width: 40em; margin: 0 0 32px; }
+
+/* chat meme */
+.convo { display: grid; gap: 12px; max-width: 640px; }
+.msg { display: flex; gap: 12px; align-items: flex-start; }
+.msg.right { flex-direction: row-reverse; }
+.avatar { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; font-weight: 700; color: #fff; }
+.bubble { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px; max-width: 30em; }
+.bubble small { display: block; color: var(--muted); font-size: 12px; margin-bottom: 2px; }
+.msg.right .bubble { background: var(--accent); color: #fff; border-color: transparent; }
+.msg.right .bubble small { color: rgba(255,255,255,.75); }
+.convo-note { color: var(--muted); margin-top: 20px; max-width: 40em; }
+
+/* map */
+.map-card { display: grid; gap: 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px; box-shadow: var(--shadow); }
+@media (min-width: 860px) { .map-card { grid-template-columns: 1.2fr 1fr; align-items: center; padding: 32px; } }
+.globe { width: 100%; max-width: 420px; margin: 0 auto; display: block; }
+.globe .grid { fill: none; stroke: var(--line); stroke-width: 1.2; }
+.globe .rim { fill: var(--bg-alt); stroke: var(--line); stroke-width: 1.5; }
+.globe .pop { fill: var(--accent); }
+.globe .pulse { fill: var(--accent); opacity: .25; transform-origin: 210px 190px; animation: pulse 2.4s ease-out infinite; }
+@keyframes pulse { from { transform: scale(.4); opacity: .45; } to { transform: scale(2.6); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .globe .pulse { animation: none; } }
+.globe text { fill: var(--text); font-size: 13px; font-weight: 600; }
+.legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.legend li { display: flex; justify-content: space-between; gap: 16px; border-bottom: 1px dashed var(--line); padding-bottom: 12px; font-size: 15px; }
+.legend li span:first-child { color: var(--muted); }
+.legend li span:last-child { font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }
+
+/* live headers + speedtest */
+.two { display: grid; gap: 16px; }
+@media (min-width: 900px) { .two { grid-template-columns: 1.3fr 1fr; } }
+.live { background: var(--code-bg); color: var(--code-text); border-radius: 14px; padding: 20px; font-size: 13px; overflow-x: auto; }
+.live .k { color: #8fb0ff; }
+.live .c { color: #7f88a8; }
+.live pre { margin: 0; white-space: pre; }
+.speed { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 10px; }
+.gauge { font-size: 56px; font-weight: 800; letter-spacing: -.03em; font-variant-numeric: tabular-nums; line-height: 1; }
+.gauge small { font-size: 18px; font-weight: 600; color: var(--muted); }
+.speed .verdict { min-height: 3.3em; color: var(--muted); font-size: 14px; }
+.speed .verdict b { color: var(--ok); font-size: 16px; display: block; }
+
+/* features */
+.features { display: grid; gap: 16px; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .features { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 960px) { .features { grid-template-columns: repeat(3, 1fr); } }
+.feature { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+.feature h3 { margin: 0 0 8px; font-size: 17px; }
+.feature p { margin: 0; color: var(--muted); font-size: 15px; }
+.ficon { width: 34px; height: 34px; border-radius: 9px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; margin-bottom: 14px; }
+.ficon svg { width: 18px; height: 18px; }
+
+/* jargon */
+.jargon { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 28px; font-size: clamp(17px, 2.4vw, 21px); line-height: 1.9; }
+.jargon mark { background: var(--accent-soft); color: var(--accent); padding: 1px 4px; border-radius: 4px; font-weight: 600; }
+.jargon p { margin: 0; }
+.jargon .translate { margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--line); font-size: 15px; color: var(--muted); line-height: 1.65; }
+
+/* bench */
+.bench { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px; }
+.bar-row { display: grid; grid-template-columns: 1fr; gap: 6px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.bar-row:last-of-type { border-bottom: 0; }
+@media (min-width: 720px) { .bar-row { grid-template-columns: 240px 1fr 110px; align-items: center; gap: 16px; } }
+.bar-label { font-size: 15px; }
+.bar-label small { display: block; color: var(--muted); font-size: 12.5px; }
+.bar-track { height: 12px; background: var(--bg-alt); border-radius: 6px; overflow: hidden; position: relative; }
+.bar-fill { height: 100%; background: var(--muted); opacity: .55; border-radius: 6px; }
+.bar-fill.us { background: var(--accent); opacity: 1; min-width: 2px; }
+.bar-track.neg { overflow: visible; }
+.bar-track.neg .bar-fill { position: absolute; right: 100%; width: 14px; background: var(--ok); opacity: 1; border-radius: 6px 0 0 6px; }
+.bar-val { font-variant-numeric: tabular-nums; font-weight: 600; text-align: left; }
+@media (min-width: 720px) { .bar-val { text-align: right; } }
+.footnote { color: var(--muted); font-size: 13px; margin: 16px 0 0; }
+
+/* certs */
+.certs { display: grid; gap: 12px; grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 800px) { .certs { grid-template-columns: repeat(4, 1fr); } }
+.cert { border: 1.5px dashed var(--line); border-radius: 14px; padding: 18px; text-align: center; background: var(--surface); }
+.cert b { display: block; font-size: 18px; letter-spacing: .02em; }
+.cert span { color: var(--muted); font-size: 13px; }
+
+/* table */
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 15px; }
+th, td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--line); }
+tr:last-child td { border-bottom: 0; }
+th { font-size: 13px; color: var(--muted); font-weight: 600; background: var(--bg-alt); }
+td.us { font-weight: 600; color: var(--accent); }
+
+/* quotes */
+.quotes { display: grid; gap: 16px; grid-template-columns: 1fr; }
+@media (min-width: 700px) { .quotes { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 960px) { .quotes { grid-template-columns: repeat(3, 1fr); } }
+blockquote { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; gap: 18px; }
+blockquote p { margin: 0; font-size: 16px; }
+blockquote cite { font-style: normal; color: var(--muted); font-size: 14px; }
+.stars { color: var(--gold); letter-spacing: 2px; font-size: 14px; }
+
+/* one more thing */
+.omt { background: #05060a; color: #eef0f7; border-radius: 20px; padding: clamp(32px, 6vw, 64px) clamp(20px, 5vw, 56px); text-align: center; }
+.omt .eyebrow { color: #8a8fa3; }
+.omt h2 { font-size: clamp(30px, 6vw, 52px); margin: 10px 0 16px; }
+.omt h2 span { background: linear-gradient(90deg, #ff7a59, #ffb259); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.omt p { color: #a6abbd; max-width: 34em; margin: 0 auto 10px; }
+.omt .fine { font-size: 12.5px; color: #6c7187; margin-top: 18px; }
+.mars { width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 24px; background: radial-gradient(circle at 35% 30%, #ffb08a, #d4542b 55%, #6b1e0c); box-shadow: 0 0 60px rgba(255,110,60,.35); position: relative; }
+.mars::after { content: ""; position: absolute; width: 10px; height: 10px; border-radius: 50%; background: #6d97ff; left: 58%; top: 46%; box-shadow: 0 0 0 4px rgba(109,151,255,.3); }
+
+/* pricing */
+.plans { display: grid; gap: 16px; grid-template-columns: 1fr; }
+@media (min-width: 700px) { .plans { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1040px) { .plans { grid-template-columns: repeat(4, 1fr); } }
+.plan { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; }
+.plan.featured { border: 2px solid var(--accent); box-shadow: var(--shadow); }
+.plan.ultra { border: 2px solid var(--gold); background: linear-gradient(180deg, var(--gold-soft), var(--surface) 60%); }
+.plan h3 { margin: 0; font-size: 18px; }
+.plan .tag { font-size: 12px; font-weight: 700; color: var(--accent); }
+.plan.ultra .tag { color: var(--gold); }
+.price { font-size: 36px; font-weight: 700; letter-spacing: -.02em; margin: 10px 0 2px; font-variant-numeric: tabular-nums; }
+.price small { font-size: 15px; color: var(--muted); font-weight: 500; }
+.plan .desc { color: var(--muted); font-size: 14px; margin: 0 0 18px; }
+.plan ul { list-style: none; padding: 0; margin: 0 0 24px; display: grid; gap: 10px; font-size: 14.5px; flex: 1; }
+.plan li { display: flex; gap: 10px; }
+.plan li::before { content: "✓"; color: var(--ok); font-weight: 700; }
+.plan .btn { justify-content: center; }
+
+/* roadmap + changelog */
+.cols { display: grid; gap: 16px; }
+@media (min-width: 860px) { .cols { grid-template-columns: 1fr 1fr; } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px; }
+.panel h3 { margin: 0 0 14px; font-size: 17px; }
+.rm { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.rm li { display: grid; grid-template-columns: 76px 1fr; gap: 12px; font-size: 15px; }
+.rm .when { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 14px; }
+.rm s { color: var(--muted); }
+.pill { display: inline-block; font-size: 11.5px; font-weight: 700; padding: 1px 7px; border-radius: 999px; margin-left: 6px; vertical-align: 1px; background: var(--bg-alt); color: var(--muted); }
+.pill.go { background: var(--ok-soft); color: var(--ok); }
+
+/* faq */
+details { border-bottom: 1px solid var(--line); padding: 18px 0; }
+details:first-of-type { border-top: 1px solid var(--line); }
+summary { cursor: pointer; font-weight: 600; font-size: 17px; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; color: var(--muted); font-weight: 400; font-size: 22px; line-height: 1; }
+details[open] summary::after { content: "−"; }
+details p { color: var(--muted); margin: 12px 0 0; max-width: 46em; }
+
+/* footer */
+footer { margin-top: 96px; border-top: 1px solid var(--line); padding: 32px 0 120px; color: var(--muted); font-size: 14px; }
+footer .wrap { display: grid; gap: 10px; }
+footer .row { display: flex; flex-wrap: wrap; gap: 8px 28px; justify-content: space-between; }
+footer .icp { font-size: 12.5px; }
+
+/* cookie banner */
+.cookie { position: fixed; left: 16px; right: 88px; bottom: 16px; z-index: 30; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 16px; font-size: 14px; display: none; }
+@media (min-width: 640px) { .cookie { right: auto; max-width: 400px; } }
+.cookie.show { display: block; }
+.cookie p { margin: 0 0 12px; color: var(--muted); }
+.cookie p b { color: var(--text); }
+.cookie .acts { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* support chat */
+.chat-btn { position: fixed; right: 16px; bottom: 16px; z-index: 31; width: 56px; height: 56px; border-radius: 50%; border: 0; background: var(--accent); color: #fff; cursor: pointer; box-shadow: var(--shadow); display: grid; place-items: center; }
+.chat-btn svg { width: 24px; height: 24px; }
+.chat-btn .online { position: absolute; top: 4px; right: 4px; width: 12px; height: 12px; border-radius: 50%; background: #22c55e; border: 2px solid var(--bg); }
+.chat { position: fixed; right: 16px; bottom: 84px; z-index: 31; width: min(360px, calc(100vw - 32px)); background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); display: none; flex-direction: column; overflow: hidden; }
+.chat.open { display: flex; }
+.chat-head { padding: 14px 16px; border-bottom: 1px solid var(--line); font-weight: 600; font-size: 15px; }
+.chat-head small { display: block; color: var(--ok); font-weight: 500; font-size: 12px; }
+.chat-body { padding: 14px 16px; display: grid; gap: 10px; max-height: 300px; overflow-y: auto; font-size: 14px; }
+.cm { padding: 8px 12px; border-radius: 12px; max-width: 85%; }
+.cm.bot { background: var(--bg-alt); justify-self: start; }
+.cm.me { background: var(--accent); color: #fff; justify-self: end; }
+.chat-opts { padding: 10px 16px 14px; display: flex; flex-wrap: wrap; gap: 6px; border-top: 1px solid var(--line); }
+.chat-opts button { font: inherit; font-size: 13px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text); cursor: pointer; }
+</style>
+</head>
+<body>
+
+<div class="announce" id="announce">🎉 <b>NoHop 2.0 发布</b>：延迟从 0 ms 优化至 0 ms，性能提升 ∞%（0 ÷ 0）。</div>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="16" cy="16" r="4" fill="#2f6bff"/></svg>
+      NoHop
+    </a>
+    <div class="nav-links">
+      <a href="#network">网络</a>
+      <a href="#features">产品</a>
+      <a href="#benchmark">性能</a>
+      <a href="#pricing">定价</a>
+      <a href="#roadmap">路线图</a>
+      <a href="status.html">状态</a>
+    </div>
+    <a class="btn btn-primary nav-cta" href="#get-started">开始使用</a>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap">
+
+    <header class="hero">
+      <div class="badges">
+        <span class="badge"><span class="dot"></span>现已覆盖全球 100% 的设备</span>
+        <span class="badge blue">延迟遥遥领先</span>
+      </div>
+      <h1>距离每位用户 <em>0 米</em>的内容分发网络</h1>
+      <p class="lead">NoHop 在每一台设备上都部署了边缘节点。无论用户身在何处，他们访问的永远是离自己最近的节点：他们自己的电脑。</p>
+      <p class="rotator" id="rotator" aria-live="polite">Works on my machine™，现在是一项企业级 SLA。</p>
+      <div class="install mono" id="get-started">
+        <span><span class="prompt">$ </span>npx nohop-cdn</span>
+        <button type="button" id="copy">复制</button>
+      </div>
+      <div class="hero-actions">
+        <a class="btn btn-ghost" href="status.html">查看全球网络状态 →</a>
+        <a class="btn btn-ghost" href="#speedtest">立即测速</a>
+      </div>
+    </header>
+
+    <div class="public-box" id="public-box" hidden>
+      <h3>⚠️ 您正在以错误的方式访问本网站</h3>
+      <p>本页面目前位于 <b id="pb-host"></b>，距离您不是 0 米。一个 localhost CDN 的官网被放到了公网上，这违背了我们的一切原则。为获得最佳体验，请将本网站下载到您自己的电脑，然后通过 localhost 访问它：</p>
+      <pre class="mono" id="pb-cmd"></pre>
+      <p style="margin:14px 0 0;font-size:14px">完成后，您与本页面之间的距离将从“未知”缩短为 0 米。</p>
+    </div>
+
+    <div class="logos">
+      <p>受到以下组织的信赖（全部由我们自己创立）</p>
+      <div class="logo-row">
+        <span>本机集团</span>
+        <span>127 Capital</span>
+        <span>环 回 银 行</span>
+        <span>我自己科技</span>
+        <span>localhost.gov</span>
+        <span>在我电脑上没问题研究院</span>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b>0 ms</b><span>回源延迟</span></div>
+      <div class="stat"><b>0 跳</b><span>平均路由跳数</span></div>
+      <div class="stat"><b>100%</b><span>缓存命中率</span></div>
+      <div class="stat"><b>16,777,216</b><span>任播地址（127.0.0.0/8）</span></div>
+    </div>
+    <div class="ticker">
+      <div class="tick"><span>今日全球公网流量</span><b id="t-traffic">0 B</b></div>
+      <div class="tick"><span>已为全人类节省的路由跳数</span><b id="t-hops">0</b></div>
+      <div class="tick"><span>自您打开本页起无事故运行</span><b id="t-uptime">0 秒</b></div>
+    </div>
+
+    <section>
+      <div class="eyebrow">起源</div>
+      <h2>一切始于一句话</h2>
+      <p class="sub">每一位工程师都说过它。每一位运维都听过它。我们是第一个认真对待它的公司。</p>
+      <div class="convo">
+        <div class="msg">
+          <div class="avatar" style="background:#7c5cff">开</div>
+          <div class="bubble"><small>开发</small>在我电脑上是好的啊。</div>
+        </div>
+        <div class="msg">
+          <div class="avatar" style="background:#e5484d">运</div>
+          <div class="bubble"><small>运维</small>那总不能把你的电脑发给每个用户吧？</div>
+        </div>
+        <div class="msg right">
+          <div class="avatar" style="background:#2f6bff">N</div>
+          <div class="bubble"><small>NoHop 创始人</small>为什么不能？</div>
+        </div>
+      </div>
+      <p class="convo-note">于是我们做了相反的事：不把你的电脑发给用户，而是让每个用户都只访问自己的电脑。从此，“在我电脑上是好的”成为了一句对所有人都成立的话。我们把它写进了 SLA。</p>
+    </section>
+
+    <section id="network">
+      <div class="eyebrow">全球网络</div>
+      <h2>一张地图，对每个人都完全正确</h2>
+      <p class="sub">传统 CDN 需要在全球数百个城市建设机房，再用复杂的调度系统把用户导向最近的节点。我们换了一个思路：把节点建在用户所在的位置。所有位置。</p>
+
+      <div class="map-card">
+        <svg class="globe" viewBox="0 0 420 380" role="img" aria-label="地球示意图，上面只有一个节点，标注为“你在这里”">
+          <circle class="rim" cx="210" cy="190" r="170"/>
+          <ellipse class="grid" cx="210" cy="190" rx="170" ry="60"/>
+          <ellipse class="grid" cx="210" cy="190" rx="170" ry="120"/>
+          <line class="grid" x1="40" y1="190" x2="380" y2="190"/>
+          <ellipse class="grid" cx="210" cy="190" rx="60" ry="170"/>
+          <ellipse class="grid" cx="210" cy="190" rx="120" ry="170"/>
+          <line class="grid" x1="210" y1="20" x2="210" y2="360"/>
+          <circle class="pulse" cx="210" cy="190" r="14"/>
+          <circle class="pop" cx="210" cy="190" r="7"/>
+          <text x="226" y="178">你在这里</text>
+          <text x="226" y="196" style="font-weight:400;fill:var(--muted)">你也在所有地方</text>
+        </svg>
+        <ul class="legend">
+          <li><span>边缘节点数</span><span>与联网设备数相同</span></li>
+          <li><span>您可见的节点</span><span>1</span></li>
+          <li><span>到最近节点的距离</span><span>0 m</span></li>
+          <li><span>到最远节点的距离</span><span>也是 0 m</span></li>
+          <li><span>节点间同步</span><span>不需要，也不可能</span></li>
+          <li><span>覆盖的国家和地区</span><span>您所在的那一个</span></li>
+          <li><span>新增节点方式</span><span>买一台电脑</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="speedtest">
+      <div class="eyebrow">实时</div>
+      <h2>本页面就是由 NoHop 分发的</h2>
+      <p class="sub">左边是您的浏览器刚刚收到的响应头。这一页从源站到您的屏幕，经过了 0 个路由器。右边可以现场测速，数据真实，结论荒谬。</p>
+      <div class="two">
+        <div class="live mono"><pre id="headers"><span class="c">正在向边缘节点请求响应头……</span></pre></div>
+        <div class="speed">
+          <div class="gauge mono" id="gauge">— <small>ms</small></div>
+          <div class="verdict" id="verdict">点击下方按钮，测量您到最近边缘节点的真实延迟。</div>
+          <button class="btn btn-primary" type="button" id="run-speed">开始测速</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="eyebrow">产品</div>
+      <h2>企业级能力，个人级覆盖范围</h2>
+      <p class="sub">每一项功能都经过了严格的工程验证，并且都可以在一句话内解释清楚它为什么成立。</p>
+      <div class="features">
+        <div class="feature">
+          <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></div>
+          <h3>天然抗 DDoS</h3>
+          <p>任何针对您节点的流量攻击都只能从您自己的机器发起。攻击者需要先成为您。</p>
+        </div>
+        <div class="feature">
+          <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+          <h3>数据主权</h3>
+          <p>您的数据从不离开您的设备。GDPR、数据本地化与跨境传输合规，全部天然满足。数据连您的房间都没出过。</p>
+        </div>
+        <div class="feature">
+          <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v6h6"/><path d="M20 20v-6h-6"/><path d="M20 9a8 8 0 0 0-14-3L4 10M4 15a8 8 0 0 0 14 3l2-4"/></svg></div>
+          <h3>缓存失效</h3>
+          <p>计算机科学两大难题之一。我们的解决方案是只保留一份数据，因此不存在不一致的副本。另一个难题（命名）我们也解决了：所有节点都叫 localhost。</p>
+        </div>
+        <div class="feature">
+          <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg></div>
+          <h3>AI 智能调度</h3>
+          <p>由 1.27 万亿参数的大模型实时决策每一个请求的最优路由。它每次都选 127.0.0.1，准确率 100%，消耗 token 0。</p>
+        </div>
+        <div class="feature">
+          <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5" cy="12" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="19" cy="19" r="2"/></svg></div>
+          <h3>比区块链更去中心化</h3>
+          <p>每个节点完全独立，彼此之间没有任何通信，甚至不知道对方存在。共识算法：1/1 节点同意即达成共识。</p>
+        </div>
+        <div class="feature">
+          <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6l-6 6 6 6M16 6l6 6-6 6"/></svg></div>
+          <h3>Edge Functions</h3>
+          <p>在离用户最近的位置运行任意代码。具体来说，就是在您的电脑上运行您的代码。我们称之为“边缘计算”，您可能称之为“运行”。</p>
+        </div>
+        <div class="feature">
+          <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c4-3 7-6 7-11a7 7 0 0 0-14 0c0 5 3 8 7 11z"/><path d="M12 8v6M9 11h6"/></svg></div>
+          <h3>碳中和</h3>
+          <p>数据传输距离 0 米，运输环节碳排放 0 克。您的电脑本身的耗电不在我们的统计范围内，这是行业惯例。</p>
+        </div>
+        <div class="feature">
+          <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg></div>
+          <h3>零配置安全上下文</h3>
+          <p>浏览器将 localhost 视为安全上下文。Service Worker、剪贴板等 API 开箱即用，无需申请证书。这是真的，我们只是恰好在这里。</p>
+        </div>
+        <div class="feature">
+          <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div>
+          <h3>离线可用</h3>
+          <p>拔掉网线，NoHop 仍然正常工作。高铁过隧道、电梯里、山顶上、海底，均不受影响。我们可能是唯一一家在断网时更稳定的 CDN。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">战略</div>
+      <h2>我们的底层逻辑</h2>
+      <p class="sub">投资人问我们的护城河是什么。我们是这样回答的：</p>
+      <div class="jargon">
+        <p>NoHop 以 <mark>localhost</mark> 为<mark>抓手</mark>，<mark>打通</mark>请求与响应的<mark>最后 0 公里</mark>，在单机维度形成数据不出门的<mark>完整闭环</mark>；通过<mark>环回能力的沉淀与复用</mark>，<mark>赋能</mark>每一台终端设备，把服务<mark>颗粒度</mark>细化到每一个字节，最终实现<mark>降本增效</mark>与用户体验的<mark>双轮驱动</mark>。</p>
+        <div class="translate"><b>翻译成人话：</b>我们在你电脑上开了个端口。</div>
+      </div>
+    </section>
+
+    <section id="benchmark">
+      <div class="eyebrow">性能</div>
+      <h2>延迟对比</h2>
+      <p class="sub">我们没有和任何竞品做对比，因为那不公平。下面是 NoHop 与光速的对比。</p>
+      <div class="bench">
+        <div class="bar-row">
+          <div class="bar-label">光往返地月一次<small>约 38.4 万公里 × 2</small></div>
+          <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
+          <div class="bar-val">2,560 ms</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">光绕地球赤道一圈<small>40,075 公里</small></div>
+          <div class="bar-track"><div class="bar-fill" style="width:5.2%"></div></div>
+          <div class="bar-val">134 ms</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">NoHop HTTP P99<small>首字节时间，300 次请求</small></div>
+          <div class="bar-track"><div class="bar-fill us" style="width:0.41%"></div></div>
+          <div class="bar-val">10.57 ms</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">NoHop HTTP P50<small>首字节时间，300 次请求</small></div>
+          <div class="bar-track"><div class="bar-fill us" style="width:0.05%"></div></div>
+          <div class="bar-val">1.40 ms</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">NoHop 网络往返<small>ping 127.0.0.1，20 个包，丢包率 0%</small></div>
+          <div class="bar-track"><div class="bar-fill us" style="width:0"></div></div>
+          <div class="bar-val">0 ms</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">您老板认为网站应有的速度<small>来源：周会</small></div>
+          <div class="bar-track"><div class="bar-fill us" style="width:0"></div></div>
+          <div class="bar-val">0 ms ✓</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">NoHop Next（研发中）<small>在请求发出之前返回响应</small></div>
+          <div class="bar-track neg"><div class="bar-fill"></div></div>
+          <div class="bar-val" style="color:var(--ok)">−3 ms</div>
+        </div>
+        <p class="footnote">测试环境：一台 Windows 11 笔记本，即本次测试中唯一的边缘节点。HTTP 延迟全部来自服务器自身的处理时间，网络传输贡献为 0。光需要 0 秒走完 0 米，因此 NoHop 与光速打平。我们正在努力把 P99 优化到 Node.js 启动之前。</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">合规</div>
+      <h2>行业最严苛的认证</h2>
+      <p class="sub">所有认证均由权威机构颁发。权威机构由我们担任。</p>
+      <div class="certs">
+        <div class="cert"><b>ISO 127001</b><span>环回信息安全管理体系</span></div>
+        <div class="cert"><b>SOC 0 Type ∞</b><span>审计范围：一台电脑</span></div>
+        <div class="cert"><b>GDPR 免检</b><span>数据从未离开过房间</span></div>
+        <div class="cert"><b>图灵测试</b><span>未参加，因此从未失败</span></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">对比</div>
+      <h2>为什么选择 NoHop</h2>
+      <p class="sub">我们尊重传统 CDN。它们解决了一个我们选择不去解决的问题。</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th></th><th>传统 CDN</th><th>NoHop</th></tr></thead>
+          <tbody>
+            <tr><td>边缘节点数</td><td>数百个</td><td class="us">数十亿个</td></tr>
+            <tr><td>回源</td><td>需要</td><td class="us">源站即边缘，边缘即源站</td></tr>
+            <tr><td>缓存一致性</td><td>最终一致</td><td class="us">强一致（只有一份）</td></tr>
+            <tr><td>全球发布耗时</td><td>数秒到数分钟</td><td class="us">0 ms</td></tr>
+            <tr><td>跨境合规</td><td>复杂</td><td class="us">数据从不出门</td></tr>
+            <tr><td>双十一高峰</td><td>需要提前扩容</td><td class="us">您一个人能有多少流量</td></tr>
+            <tr><td>断网时可用</td><td>否</td><td class="us">是</td></tr>
+            <tr><td>竞争对手</td><td>很多</td><td class="us">没有（也没有客户）</td></tr>
+            <tr><td>其他人能访问您的内容</td><td>是</td><td class="us">否</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">客户</div>
+      <h2>来自用户的声音</h2>
+      <p class="sub">以下评价均来自虚构的用户。真实用户只有一位，而且就是您。</p>
+      <div class="quotes">
+        <blockquote>
+          <p>“迁移到 NoHop 之后，我们的 P99 延迟降到了 0。用户数也降到了 0。”</p>
+          <cite><span class="stars">★★★★★</span><br>某初创公司 CTO</cite>
+        </blockquote>
+        <blockquote>
+          <p>“我把公司官网部署上去，在我电脑上打开速度飞快。老板说他那边打不开，可能是他网不好。”</p>
+          <cite><span class="stars">★★★★★</span><br>某前端工程师（已离职）</cite>
+        </blockquote>
+        <blockquote>
+          <p>“终于有一个 CDN 在高铁进隧道的时候也能正常工作了。”</p>
+          <cite><span class="stars">★★★★★</span><br>某通勤开发者</cite>
+        </blockquote>
+        <blockquote>
+          <p>“我不理解，但我大受震撼。”</p>
+          <cite><span class="stars">★★★★★</span><br>某投资人（已投）</cite>
+        </blockquote>
+        <blockquote>
+          <p>“我们把降本增效做到了极致：带宽费 0，机房费 0，CDN 账单 0。业务收入也 0，但成本结构非常健康。”</p>
+          <cite><span class="stars">★★★★★</span><br>某公司财务总监</cite>
+        </blockquote>
+        <blockquote>
+          <p>“格局打开了。原来最近的节点一直在我身边。”</p>
+          <cite><span class="stars">★★★★★</span><br>某在深夜顿悟的运维</cite>
+        </blockquote>
+      </div>
+    </section>
+
+    <section>
+      <div class="omt">
+        <div class="eyebrow">One more thing</div>
+        <div class="mars" aria-hidden="true"></div>
+        <h2>NoHop <span>星际版</span></h2>
+        <p>地球到火星的单程光延迟是 3 到 22 分钟。任何星际 CDN 都必须面对这个物理极限。</p>
+        <p>除了我们。在 NoHop 星际网络中，火星用户访问火星节点的延迟同样是 <b style="color:#fff">0 ms</b>。</p>
+        <p class="fine">* 前提是用户本人及其电脑都在火星上。NoHop 不承担往返火星的交通费用。</p>
+      </div>
+    </section>
+
+    <section id="pricing">
+      <div class="eyebrow">定价</div>
+      <h2>简单透明的定价</h2>
+      <p class="sub">带宽不限量，上限取决于您的内存总线。</p>
+      <div class="plans">
+        <div class="plan">
+          <h3>个人版</h3>
+          <div class="price">¥0 <small>/ 月</small></div>
+          <p class="desc">适合个人开发者与好奇的人。</p>
+          <ul>
+            <li>1 个专属边缘节点</li>
+            <li>不限带宽与请求数</li>
+            <li>全球分发（全球 = 您的电脑）</li>
+            <li>社区支持（您自己）</li>
+          </ul>
+          <a class="btn btn-ghost" href="#get-started">开始使用</a>
+        </div>
+        <div class="plan featured">
+          <span class="tag">最受欢迎</span>
+          <h3>团队版</h3>
+          <div class="price">¥0 <small>/ 人 / 月</small></div>
+          <p class="desc">每位成员都有自己的节点。</p>
+          <ul>
+            <li>个人版全部功能</li>
+            <li>每位成员 1 个专属边缘节点</li>
+            <li>成员之间完全隔离，互相看不到对方的内容</li>
+            <li>无需开协作会议，因为无法协作</li>
+          </ul>
+          <a class="btn btn-primary" href="#get-started">开始使用</a>
+        </div>
+        <div class="plan">
+          <h3>企业版</h3>
+          <div class="price">¥699 <small>/ 月</small></div>
+          <p class="desc">与免费版功能完全相同。</p>
+          <ul>
+            <li>团队版全部功能</li>
+            <li>一张写着“企业版”的 PDF 证书</li>
+            <li>99.999% SLA（只要电脑开着）</li>
+            <li>专属客户经理（您自己）</li>
+          </ul>
+          <a class="btn btn-ghost" href="#get-started">联系销售</a>
+        </div>
+        <div class="plan ultra">
+          <span class="tag">限量典藏</span>
+          <h3>Pro Max Ultra 至尊版</h3>
+          <div class="price">¥6,999 <small>/ 月</small></div>
+          <p class="desc">为发烧友打造的环回体验。</p>
+          <ul>
+            <li>一根 0 米长的镀金网线</li>
+            <li>无氧铜环回接口，数据音质更通透</li>
+            <li>专属风水师调整电脑朝向以优化延迟</li>
+            <li>每月一次上门重启服务</li>
+          </ul>
+          <a class="btn btn-gold" href="#get-started">尊享开通</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="roadmap">
+      <div class="eyebrow">路线图</div>
+      <h2>我们正在建设的未来</h2>
+      <p class="sub">路线图仅供参考，不构成任何承诺。尤其是第三项。</p>
+      <div class="cols">
+        <div class="panel">
+          <h3>路线图</h3>
+          <ul class="rm">
+            <li><span class="when">2027 Q1</span><span>负延迟：在请求发出前返回响应<span class="pill go">研发中</span></span></li>
+            <li><span class="when">2027 Q2</span><span>NoHop 星际版：火星节点<span class="pill">等一张火箭票</span></span></li>
+            <li><span class="when">2027 Q3</span><span><s>支持 localhost 以外的访问</s><span class="pill">已取消：与公司愿景不符</span></span></li>
+            <li><span class="when">2027 Q4</span><span>量子纠缠同步：解决一个不存在的同步问题<span class="pill">规划中</span></span></li>
+            <li><span class="when">2028</span><span>上市。估值方法：市梦率<span class="pill go">已估完</span></span></li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>更新日志</h3>
+          <ul class="rm">
+            <li><span class="when mono">v2.0.0</span><span>延迟从 0 ms 优化至 0 ms，性能提升 ∞%。</span></li>
+            <li><span class="when mono">v1.0.3</span><span>新增 AI 智能调度。行为与之前完全一致，但现在是 AI 做的。</span></li>
+            <li><span class="when mono">v1.0.2</span><span>移除了 0 个节点，新增了 0 个节点。</span></li>
+            <li><span class="when mono">v1.0.1</span><span>修复了内容可能被其他人访问到的 bug。</span></li>
+            <li><span class="when mono">v1.0.0</span><span>首次发布。全球同步上线，耗时 0 ms。</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">常见问题</div>
+      <h2>FAQ</h2>
+      <details>
+        <summary>别人能访问我通过 NoHop 分发的内容吗？</summary>
+        <p>不能。这是我们安全模型的核心，也是我们能做到 100% 缓存命中率和零 DDoS 风险的原因。这不是 bug，是 feature。</p>
+      </details>
+      <details>
+        <summary>用户反馈打不开怎么办？</summary>
+        <p>请按照我们的标准客服流程处理：第一步，请用户清一下缓存再试试；第二步，请用户重启试试；第三步，告诉用户“在我电脑上是好的”。截至目前，该流程的问题关闭率为 100%。</p>
+      </details>
+      <details>
+        <summary>我的电脑关机了怎么办？</summary>
+        <p>您的边缘节点会进入休眠。根据我们的 SLA，这不计为宕机，因为此时您的节点上也没有任何用户。薛定谔的节点，不看就不算挂。</p>
+      </details>
+      <details>
+        <summary>NoHop 和直接打开 localhost 有什么区别？</summary>
+        <p>我们有落地页、状态页、定价页、路线图和一个客服机器人。另外，我们的响应头里写着 <code>X-Cache: HIT</code>。格局打开。</p>
+      </details>
+      <details>
+        <summary>你们用的是什么技术栈？</summary>
+        <p>Node.js 自带的 <code>http</code> 模块。对外我们称之为“自研高性能边缘计算引擎”。</p>
+      </details>
+      <details>
+        <summary>为什么是 127.0.0.0/8 而不是只用 127.0.0.1？</summary>
+        <p>整个 127.0.0.0/8 段都是环回地址，共 16,777,216 个。我们是全球唯一一家拥有完整 /8 段的 CDN。每一个用户都拥有它。</p>
+      </details>
+      <details>
+        <summary>支持 IPv6 吗？</summary>
+        <p>支持。在 IPv6 下，您的边缘节点地址是 <code>::1</code>。迁移到 IPv6 后，您的节点数量保持不变，地址变得更短了。这是我们第一次在地址长度上遥遥领先。</p>
+      </details>
+      <details>
+        <summary>能抗住双十一吗？</summary>
+        <p>能。双十一期间您的节点只服务您一个人，峰值 QPS 取决于您刷新页面的手速。</p>
+      </details>
+      <details>
+        <summary>如何清除缓存？</summary>
+        <p>运行 <code>nohop-cdn purge</code>，全球缓存会在 0 ms 内清除完毕。由于我们从未缓存任何东西，这一操作没有任何效果，但它会让您感觉好一些。</p>
+      </details>
+      <details>
+        <summary>这是一个笑话吗？</summary>
+        <p>我们的法务团队建议我们不要回答这个问题。我们的法务团队也是您。</p>
+      </details>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <span>© 2026 NoHop CDN。我们不传输数据，我们只是数据的原地不动工。</span>
+      <span><a href="status.html">网络状态</a> · 隐私政策：我们拿不到您的任何数据 · 招聘：已满员（1/1）</span>
+    </div>
+    <div class="icp">环ICP备127001号 · 本机网安备 00000000000001 号 · 本服务仅在 127.0.0.0/8 范围内提供</div>
+  </div>
+</footer>
+
+<div class="cookie" id="cookie" role="dialog" aria-label="Cookie 提示">
+  <p><b>本网站使用 cookie。</b>它们存储在离您最近的节点上，也就是您的电脑里。和其他所有网站一样，但我们是唯一一个说实话的。</p>
+  <div class="acts">
+    <button class="btn btn-primary" type="button" data-cookie>接受</button>
+    <button class="btn btn-ghost" type="button" data-cookie>接受（企业版）</button>
+  </div>
+</div>
+
+<button class="chat-btn" type="button" id="chat-btn" aria-label="在线客服">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>
+  <span class="online"></span>
+</button>
+<div class="chat" id="chat" role="dialog" aria-label="在线客服">
+  <div class="chat-head">NoHop 客服<small>● 在线 · 平均响应时间 0 ms</small></div>
+  <div class="chat-body" id="chat-body"></div>
+  <div class="chat-opts" id="chat-opts"></div>
+</div>
+
+<script>
+(function () {
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // 判断本页是否已离开作者的电脑
+  var host = location.hostname;
+  var isFile = location.protocol === 'file:';
+  var isLocal = isFile || host === 'localhost' || /\.localhost$/.test(host) || /^127\./.test(host) || host === '[::1]' || host === '::1';
+  var isPublic = !isLocal;
+  var viaNoHop = isLocal && !isFile;
+  var repoUrl = null;
+  if (/\.github\.io$/.test(host)) {
+    var seg = location.pathname.split('/')[1];
+    repoUrl = 'https://github.com/' + host.split('.')[0] + '/' + (seg && !/\.html$/.test(seg) ? seg : host);
+  }
+
+  if (isPublic) {
+    var ann = document.getElementById('announce');
+    ann.className = 'announce incident';
+    ann.innerHTML = '⚠️ <b>重大事故</b>：本页面已离开作者的电脑，正在被分发给陌生人。受影响用户：您。 <a href="status.html" style="color:#fff">查看事故详情 →</a>';
+    document.getElementById('public-box').hidden = false;
+    document.getElementById('pb-host').textContent = host;
+    document.getElementById('pb-cmd').textContent = (repoUrl
+      ? '$ git clone ' + repoUrl + '\n$ cd ' + repoUrl.split('/').pop() + '\n'
+      : '') + '$ node bin/nohop-cdn.js site\n\n# 然后打开 http://127.0.0.1:8127';
+  }
+
+  // 复制安装命令
+  var btn = document.getElementById('copy');
+  btn.addEventListener('click', function () {
+    var done = function () { btn.textContent = '已复制'; setTimeout(function () { btn.textContent = '复制'; }, 1500); };
+    try { navigator.clipboard.writeText('npx nohop-cdn').then(done, function () {}); } catch (e) {}
+  });
+
+  // 轮播标语
+  var slogans = [
+    'Works on my machine™，现在是一项企业级 SLA。',
+    '我们不传输数据，我们只是数据的原地不动工。',
+    '打通最后 0 公里。',
+    '比光速更快？不，我们和光速打平。',
+    '你的电脑，就是你的数据中心。',
+    '不是在本地运行，是在边缘运行。',
+  ];
+  var rot = document.getElementById('rotator'), si = 0;
+  if (!reduce) setInterval(function () { si = (si + 1) % slogans.length; rot.textContent = slogans[si]; }, 3200);
+
+  // 实时数字：老虎机式滚动，然后永远停在 0
+  var traffic = document.getElementById('t-traffic');
+  var hops = document.getElementById('t-hops');
+  var units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+  var finalTraffic = '0 B', finalHops = '0';
+  if (isPublic) {
+    // 公网模式：滚动停下时显示本页真实经过公网传输的字节数
+    var navEntry = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+    var bytes = navEntry && navEntry.transferSize;
+    finalTraffic = bytes ? (bytes / 1024).toFixed(1) + ' KB' : '不详（侥幸命中了缓存）';
+    finalHops = '0（今天没有省下）';
+    traffic.previousElementSibling.textContent = '本页刚刚在公网上传输了';
+    document.getElementById('t-uptime').previousElementSibling.textContent = '自您打开本页起事故已持续';
+    traffic.textContent = finalTraffic; hops.textContent = finalHops;
+  }
+  function spin() {
+    if (reduce) return;
+    var n = 0, iv = setInterval(function () {
+      traffic.textContent = (Math.random() * 999).toFixed(1) + ' ' + units[Math.floor(Math.random() * units.length)];
+      hops.textContent = Math.floor(Math.random() * 1e9).toLocaleString();
+      if (++n > 14) { clearInterval(iv); traffic.textContent = finalTraffic; hops.textContent = finalHops; }
+    }, 45);
+  }
+  setTimeout(spin, 1200); setInterval(spin, 6000);
+
+  var t0 = Date.now(), up = document.getElementById('t-uptime');
+  setInterval(function () { up.textContent = Math.floor((Date.now() - t0) / 1000).toLocaleString() + ' 秒'; }, 1000);
+
+  // 响应头
+  var out = document.getElementById('headers');
+  var esc = function (s) { return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); };
+  if (isFile) {
+    out.innerHTML = '<span class="c"># 您正在通过 file:// 直接打开本页面，未经 NoHop 加速。\n# 在项目目录运行以下命令，即可将本页分发到全球边缘网络：\n\n</span>$ node bin/nohop-cdn.js site';
+  } else if (isPublic) {
+    var p0 = performance.now();
+    fetch(location.href, { method: 'HEAD', cache: 'no-store' }).then(function (res) {
+      var ms = (performance.now() - p0).toFixed(1);
+      var keys = ['server', 'x-cache', 'x-served-by', 'via', 'age', 'x-github-request-id', 'x-fastly-request-id', 'cf-cache-status', 'cf-ray', 'x-vercel-cache', 'x-vercel-id', 'x-nf-request-id'];
+      var lines = ['<span class="c">HTTP/' + '1.1 ' + res.status + '  ·  往返 ' + ms + ' ms（不是 0）</span>'];
+      keys.forEach(function (k) {
+        var v = res.headers.get(k);
+        if (v !== null) lines.push('<span class="k">' + esc(k) + '</span>: ' + esc(v));
+      });
+      var g = function (k) { return res.headers.get(k) || ''; };
+      var server = g('server').toLowerCase();
+      var who = /github/.test(server) || g('x-github-request-id') ? 'GitHub'
+        : /cloudflare/.test(server) || g('cf-ray') ? 'Cloudflare'
+        : g('x-vercel-id') ? 'Vercel'
+        : /netlify/.test(server) || g('x-nf-request-id') ? 'Netlify'
+        : '一台陌生的服务器';
+      lines.push('',
+        '<span class="c"># 本页面目前由竞争对手 ' + esc(who) + ' 分发。我们对此深表遗憾。</span>',
+        g('x-cache') ? '<span class="c"># 对方的响应头里也写着 x-cache。但对方的服务器不是您的电脑。</span>' : '<span class="c"># 对方甚至没有声明缓存命中。</span>',
+        '<span class="c"># x-hops: 未知（大于 0，这就已经输了）</span>',
+        '<span class="c"># x-works-on-my-machine: 不再成立</span>');
+      out.innerHTML = lines.join('\n');
+    }).catch(function () {
+      out.innerHTML = '<span class="c"># 连公网服务器也联系不上了。事故正在升级。</span>';
+    });
+  } else {
+    var h0 = performance.now();
+    fetch(location.href, { method: 'HEAD', cache: 'no-store' }).then(function (res) {
+      var ms = (performance.now() - h0).toFixed(1);
+      var keys = ['server', 'x-cache', 'x-edge-location', 'x-edge-pop', 'x-hops', 'x-origin-distance', 'x-served-by', 'x-works-on-my-machine', 'x-ai-routing', 'x-carbon-emissions', 'x-latency-rank', 'x-speed-of-light', 'x-compliance', 'via'];
+      var lines = ['<span class="c">HTTP/1.1 ' + res.status + '  ·  往返 ' + ms + ' ms</span>'];
+      var found = 0;
+      keys.forEach(function (k) {
+        var v = res.headers.get(k);
+        if (v !== null) { found++; lines.push('<span class="k">' + esc(k) + '</span>: ' + esc(v)); }
+      });
+      if (found < 3) lines.push('', '<span class="c"># 本页面似乎没有经过 NoHop 分发。您的内容可能已经离开了您的电脑。</span>');
+      out.innerHTML = lines.join('\n');
+    }).catch(function () {
+      out.innerHTML = '<span class="c"># 无法连接边缘节点。根据 SLA，这不算宕机。</span>';
+    });
+  }
+
+  // 测速：真实测量，然后给出 360 式结论
+  var gauge = document.getElementById('gauge'), verdict = document.getElementById('verdict'), run = document.getElementById('run-speed');
+  run.addEventListener('click', function () {
+    run.disabled = true;
+    verdict.textContent = '正在测量您到全球边缘网络的延迟……';
+    if (isPublic) {
+      // 公网模式：测的是到托管服务器的真实往返时间
+      var pt = [], pn = 10;
+      (function pOnce() {
+        var t = performance.now();
+        fetch(location.href, { method: 'HEAD', cache: 'no-store' }).then(function () {
+          pt.push(performance.now() - t);
+          gauge.innerHTML = pt[pt.length - 1].toFixed(1) + ' <small>ms</small>';
+          if (pt.length < pn) return pOnce();
+          pt.sort(function (a, b) { return a - b; });
+          var med = pt[Math.floor(pn / 2)];
+          // 光在光纤中约 200 km/ms，往返除以 2
+          var km = Math.round(med / 2 * 200).toLocaleString();
+          gauge.innerHTML = med.toFixed(1) + ' <small>ms</small>';
+          verdict.innerHTML = '<b style="color:#d97706">您落后于全国 0% 的用户。</b>您与本页面之间隔着 ' + med.toFixed(1) + ' ms 的真实世界。按光纤中的光速估算，服务器最远可能在 ' + km + ' 公里之外。使用 NoHop，这两个数字都会是 0。';
+          run.disabled = false;
+          run.textContent = '再测一次（不会变好的）';
+        }).catch(function () {
+          verdict.textContent = '测速失败。公网就是这样。';
+          run.disabled = false;
+        });
+      })();
+      return;
+    }
+    if (!viaNoHop) {
+      gauge.innerHTML = '0 <small>ms</small>';
+      verdict.innerHTML = '<b>理论值：0 ms</b>本页未经 NoHop 分发，无法实测。但我们对理论值非常有信心。';
+      run.disabled = false;
+      return;
+    }
+    var times = [], n = 30;
+    (function once() {
+      var t = performance.now();
+      fetch('/__nohop/ping', { cache: 'no-store' }).then(function () {
+        times.push(performance.now() - t);
+        gauge.innerHTML = (times[times.length - 1]).toFixed(2) + ' <small>ms</small>';
+        if (times.length < n) return once();
+        times.sort(function (a, b) { return a - b; });
+        var med = times[Math.floor(n / 2)];
+        gauge.innerHTML = med.toFixed(2) + ' <small>ms</small>';
+        verdict.innerHTML = '<b>您的速度击败了全国 100% 的用户！</b>参与排名用户：1 位。网络部分耗时 0 ms，其余为浏览器在思考人生。';
+        run.disabled = false;
+        run.textContent = '再测一次';
+      }).catch(function () {
+        verdict.textContent = '边缘节点没有响应。根据 SLA，这不算宕机。';
+        run.disabled = false;
+      });
+    })();
+  });
+
+  // Cookie 横幅
+  var cookie = document.getElementById('cookie');
+  if (isPublic) cookie.querySelector('p').innerHTML = '<b>本网站使用 cookie。</b>好消息是，即使本页面已经被部署到了公网，cookie 仍然存储在您的电脑里。这是本网站目前唯一没有出事故的部分。';
+  var seen = false;
+  try { seen = localStorage.getItem('nohop-cookie') === '1'; } catch (e) {}
+  if (!seen) setTimeout(function () { cookie.classList.add('show'); }, 1500);
+  document.querySelectorAll('[data-cookie]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      cookie.classList.remove('show');
+      try { localStorage.setItem('nohop-cookie', '1'); } catch (e) {}
+    });
+  });
+
+  // 客服机器人
+  var chat = document.getElementById('chat'), body = document.getElementById('chat-body'), opts = document.getElementById('chat-opts');
+  var script = {
+    start: { bot: '您好，我是 NoHop 客服，也是您。请问有什么可以帮您？', opts: ['网站打不开', '延迟太高', '我要投诉', '转人工'] },
+    '网站打不开': { bot: '请清一下缓存再试试。', opts: ['还是打不开'] },
+    '还是打不开': { bot: '请重启试试。', opts: ['重启了还是不行'] },
+    '重启了还是不行': { bot: '在我电脑上是好的。', opts: ['……', '转人工'] },
+    '……': { bot: '感谢您的理解。本次服务已解决您的问题。', opts: ['我要投诉'] },
+    '延迟太高': { bot: '经检测，您的网络延迟为 0 ms。如您仍感到慢，可能是您的心理延迟，建议休息一下。', opts: ['我要投诉', '转人工'] },
+    '我要投诉': { bot: '好的，已为您提交投诉。投诉将被发送至离您最近的处理中心：您自己。预计处理时间 0 ms。', opts: ['转人工'] },
+    '转人工': { bot: '正在为您转接人工客服……<br>已接通。人工客服是：您。', opts: ['重新开始'] },
+    '重新开始': null,
+    '为什么页面在出事故': { bot: '作者执行了 git push。这是一个人的错误，却影响了所有访客。我们正在努力把本页面送回作者的电脑。', opts: ['什么时候修好', '转人工'] },
+    '什么时候修好': { bot: '当您把本网站下载到自己的电脑上时，对您来说事故就修好了。这也是我们唯一的修复方案。', opts: ['转人工', '重新开始'] },
+  };
+  if (isPublic) script.start = { bot: '您好，我是 NoHop 客服。检测到您正在通过公网访问本页面，人工客服（您）对此也无能为力。请问有什么可以帮您？', opts: ['为什么页面在出事故', '网站打不开', '延迟太高', '转人工'] };
+  function say(cls, html) {
+    var d = document.createElement('div');
+    d.className = 'cm ' + cls; d.innerHTML = html;
+    body.appendChild(d); body.scrollTop = body.scrollHeight;
+  }
+  function step(key) {
+    if (key === '重新开始') { body.innerHTML = ''; key = 'start'; }
+    var s = script[key];
+    opts.innerHTML = '';
+    setTimeout(function () {
+      say('bot', s.bot);
+      s.opts.forEach(function (o) {
+        var b = document.createElement('button');
+        b.type = 'button'; b.textContent = o;
+        b.addEventListener('click', function () { say('me', o); step(o); });
+        opts.appendChild(b);
+      });
+    }, reduce ? 0 : 400);
+  }
+  var started = false;
+  document.getElementById('chat-btn').addEventListener('click', function () {
+    chat.classList.toggle('open');
+    if (!started) { started = true; step('start'); }
+  });
+
+  // 切走标签页时
+  var title = document.title;
+  document.addEventListener('visibilitychange', function () {
+    document.title = document.hidden ? (isPublic ? '事故仍在进行中' : '你的边缘节点想你了') : title;
+  });
+
+  // 给打开控制台的人
+  console.log('%cNoHop CDN', 'font-size:28px;font-weight:800;color:#2f6bff');
+  console.log(isPublic
+    ? '如果你能看到这条消息，说明你按了 F12，而且你正在公网上看这个页面。\n恭喜，你已被录用为 NoHop 事故响应工程师。\n第一项任务：把本网站下载到你的电脑上。'
+    : '如果你能看到这条消息，说明你按了 F12。\n恭喜，你已被录用为 NoHop 边缘节点运维工程师。\n入职地点：你现在坐的位置。通勤时间：0 ms。');
+})();
+</script>
+</body>
+</html>
