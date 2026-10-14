@@ -35,11 +35,8 @@ a { display: inline-block; margin-top: 24px; color: var(--accent); font-weight: 
   var host = location.hostname;
   var isPublic = !(host === 'localhost' || /\.localhost$/.test(host) || /^127\./.test(host) || host === '[::1]' || host === '::1');
   if (isPublic) {
-    // GitHub Pages 项目站点挂在 /<仓库名>/ 下，首页链接要带上这一段
-    if (/\.github\.io$/.test(host)) {
-      var seg = location.pathname.split('/')[1];
-      if (seg) document.getElementById('home').href = '/' + seg + '/';
-    }
+    // GitHub Pages 项目站点挂在 /nohop-cdn/ 下，首页链接要带上这一段
+    if (/^\/nohop-cdn(\/|$)/.test(location.pathname)) document.getElementById('home').href = '/nohop-cdn/';
     document.getElementById('home').textContent = '← 返回首页（距离不详，肯定不是 0 米）';
   }
   var lines = [

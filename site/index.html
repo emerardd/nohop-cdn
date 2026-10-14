@@ -828,11 +828,7 @@ footer .icp { font-size: 12.5px; }
   var isLocal = isFile || host === 'localhost' || /\.localhost$/.test(host) || /^127\./.test(host) || host === '[::1]' || host === '::1';
   var isPublic = !isLocal;
   var viaNoHop = isLocal && !isFile;
-  var repoUrl = null;
-  if (/\.github\.io$/.test(host)) {
-    var seg = location.pathname.split('/')[1];
-    repoUrl = 'https://github.com/' + host.split('.')[0] + '/' + (seg && !/\.html$/.test(seg) ? seg : host);
-  }
+  var repoUrl = 'https://github.com/emerardd/nohop-cdn';
 
   if (isPublic) {
     var ann = document.getElementById('announce');
