@@ -333,6 +333,25 @@ footer .icp { font-size: 12.5px; }
 .cm.me { background: var(--accent); color: #fff; justify-self: end; }
 .chat-opts { padding: 10px 16px 14px; display: flex; flex-wrap: wrap; gap: 6px; border-top: 1px solid var(--line); }
 .chat-opts button { font: inherit; font-size: 13px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text); cursor: pointer; }
+
+/* 至尊版开通 */
+.ultra-badge { font-size: 11px; font-weight: 800; letter-spacing: .12em; padding: 2px 7px; border-radius: 6px; background: linear-gradient(135deg, #f7d77e, #c9932b); color: #2a1a00; }
+.modal-back { position: fixed; inset: 0; z-index: 40; background: rgba(5,6,12,.6); backdrop-filter: blur(4px); display: none; place-items: center; padding: 16px; }
+.modal-back.open { display: grid; }
+.modal { width: min(520px, 100%); max-height: calc(100vh - 32px); overflow-y: auto; background: var(--surface); border: 2px solid var(--gold); border-radius: 18px; box-shadow: var(--shadow); padding: 26px; }
+.modal h3 { margin: 0 0 4px; font-size: 20px; }
+.modal .msub { color: var(--muted); font-size: 14px; margin: 0 0 18px; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; font-size: 15px; }
+.steps li { display: flex; gap: 10px; align-items: baseline; opacity: .35; transition: opacity .3s; }
+.steps li.on { opacity: 1; }
+.steps li .mark { width: 18px; flex: none; color: var(--muted); }
+.steps li.done .mark { color: var(--ok); }
+.receipt { margin-top: 18px; border-top: 1px dashed var(--line); padding-top: 14px; font-size: 14px; display: grid; gap: 6px; }
+.receipt div { display: flex; justify-content: space-between; gap: 12px; }
+.receipt .neg { color: var(--ok); }
+.receipt .total { font-weight: 800; font-size: 16px; border-top: 1px solid var(--line); padding-top: 8px; margin-top: 4px; }
+.cert { display: block; width: 100%; height: auto; margin-top: 18px; border-radius: 10px; }
+.modal-acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; justify-content: flex-end; }
 </style>
 </head>
 <body>
@@ -344,6 +363,7 @@ footer .icp { font-size: 12.5px; }
     <a class="logo" href="#">
       <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="16" cy="16" r="4" fill="#2f6bff"/></svg>
       NoHop
+      <span class="ultra-badge" id="ultra-badge" hidden>ULTRA</span>
     </a>
     <div class="nav-links">
       <a href="#network">网络</a>
@@ -701,7 +721,7 @@ footer .icp { font-size: 12.5px; }
             <li>99.999% SLA（只要电脑开着）</li>
             <li>专属客户经理（您自己）</li>
           </ul>
-          <a class="btn btn-ghost" href="#get-started">联系销售</a>
+          <a class="btn btn-ghost" href="#get-started" id="contact-sales">联系销售</a>
         </div>
         <div class="plan ultra">
           <span class="tag">限量典藏</span>
@@ -714,7 +734,7 @@ footer .icp { font-size: 12.5px; }
             <li>专属风水师调整电脑朝向以优化延迟</li>
             <li>每月一次上门重启服务</li>
           </ul>
-          <a class="btn btn-gold" href="#get-started">尊享开通</a>
+          <a class="btn btn-gold" href="#get-started" id="ultra-btn">尊享开通</a>
         </div>
       </div>
     </section>
@@ -821,6 +841,10 @@ footer .icp { font-size: 12.5px; }
   <div class="chat-head">NoHop 客服<small>● 在线 · 平均响应时间 0 ms</small></div>
   <div class="chat-body" id="chat-body"></div>
   <div class="chat-opts" id="chat-opts"></div>
+</div>
+
+<div class="modal-back" id="ultra-modal" role="dialog" aria-modal="true" aria-labelledby="ultra-title">
+  <div class="modal" id="ultra-box"></div>
 </div>
 
 <script>
@@ -1275,6 +1299,11 @@ i18nToggle(document.getElementById('lang-btn'));
     '转人工': { bot: '正在为您转接人工客服……<br>已接通。人工客服是：您。', opts: ['重新开始'] },
     '为什么页面在出事故': { bot: '作者执行了 git push。这是一个人的错误，却影响了所有访客。我们正在努力把本页面送回作者的电脑。', opts: ['什么时候修好', '转人工'] },
     '什么时候修好': { bot: '当您把本网站下载到自己的电脑上时，对您来说事故就修好了。这也是我们唯一的修复方案。', opts: ['转人工', '重新开始'] },
+    sales: { bot: '您好，我是 NoHop 企业客户经理，也是您。请问贵公司有多少台电脑？', opts: ['1 台', '很多台'] },
+    '1 台': { bot: '完美。企业版为您提供 1 个专属节点，功能与免费版完全相同，月费 ¥699。是否需要开发票？', opts: ['需要发票', '太贵了'] },
+    '很多台': { bot: '每台电脑都是一个独立节点，彼此看不到对方。建议每台单独购买企业版，并为它们各开一次周会。', opts: ['太贵了', '需要发票'] },
+    '需要发票': { bot: '发票已开具，并已发送至离您最近的财务部门：您。', opts: ['太贵了', '重新开始'] },
+    '太贵了': { bot: '理解。免费版和企业版功能完全相同，我们强烈推荐免费版。这是本公司销售第一次劝客户别买，已上报表彰。', opts: ['重新开始'] },
   }, {
     start: { bot: "Hi, I'm NoHop Support. I'm also you. How can I help?", opts: ["The site won't load", 'Latency is too high', 'I want to complain', 'Talk to a human'] },
     "The site won't load": { bot: 'Have you tried clearing your cache?', opts: ["Still won't load"] },
@@ -1286,6 +1315,11 @@ i18nToggle(document.getElementById('lang-btn'));
     'Talk to a human': { bot: 'Transferring you to a human agent…<br>Connected. Your human agent is: you.', opts: ['Start over'] },
     'Why is the site having an incident?': { bot: "The author ran git push. One person's mistake, affecting every visitor. We're working to get this page back onto the author's computer.", opts: ['When will it be fixed?', 'Talk to a human'] },
     'When will it be fixed?': { bot: "The incident is resolved for you the moment you download this site onto your own computer. It's our only remediation plan.", opts: ['Talk to a human', 'Start over'] },
+    sales: { bot: "Hi, I'm your NoHop Enterprise account executive. I'm also you. How many computers does your company have?", opts: ['Just one', 'Lots'] },
+    'Just one': { bot: 'Perfect. Enterprise gives you 1 dedicated node, identical to the free plan, for $99/mo. Would you like an invoice?', opts: ['I need an invoice', 'Too expensive'] },
+    'Lots': { bot: "Each computer is its own isolated node and can't see the others. We recommend buying Enterprise for each one, plus a weekly sync between them.", opts: ['Too expensive', 'I need an invoice'] },
+    'I need an invoice': { bot: 'Invoice issued and sent to the finance department nearest you: you.', opts: ['Too expensive', 'Start over'] },
+    'Too expensive': { bot: 'Totally understand. Free and Enterprise are identical, so we strongly recommend Free. This is the first time our sales team has talked a customer out of buying. They have been nominated for an award.', opts: ['Start over'] },
   });
   if (isPublic) script.start = L(
     { bot: '您好，我是 NoHop 客服。检测到您正在通过公网访问本页面，人工客服（您）对此也无能为力。请问有什么可以帮您？', opts: ['为什么页面在出事故', '网站打不开', '延迟太高', '转人工'] },
@@ -1314,6 +1348,178 @@ i18nToggle(document.getElementById('lang-btn'));
     chat.classList.toggle('open');
     if (!started) { started = true; step('start'); }
   });
+
+  // 联系销售：打开客服窗口，由“企业客户经理”（也是您）接待
+  document.getElementById('contact-sales').addEventListener('click', function (e) {
+    e.preventDefault();
+    chat.classList.add('open');
+    started = true;
+    body.innerHTML = '';
+    step('sales');
+  });
+
+  // 至尊版开通：一段演出来的开通流程，不收集任何支付或个人信息。
+  // 开通状态和证书编号存在 localStorage，刷新后导航栏仍然挂着 ULTRA。
+  var ULTRA_KEY = 'nohop-ultra';
+  var modal = document.getElementById('ultra-modal'), box = document.getElementById('ultra-box');
+  var ultraBtn = document.getElementById('ultra-btn'), badge = document.getElementById('ultra-badge');
+  var ultraLabel = ultraBtn.textContent;
+  var certNo = null;
+  try { certNo = localStorage.getItem(ULTRA_KEY); } catch (e) {}
+  function markUltra(on) {
+    badge.hidden = !on;
+    ultraBtn.textContent = on ? L('已开通 ✓ 查看证书', 'Activated ✓ View certificate') : ultraLabel;
+  }
+  if (certNo) markUltra(true);
+
+  function closeModal() { modal.classList.remove('open'); }
+  modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+
+  var ultraSteps = L([
+    '验证您的电脑是否存在',
+    '为您的 0 米网线镀金（24K）',
+    '为环回接口除氧，提升数据音质',
+    '联系风水师，将电脑调整至延迟最低的朝向',
+    '扣款 ¥6,999',
+    '发现我们没有收款账户，全额退款 ¥6,999',
+    '为您的边缘节点加冕',
+  ], [
+    'Verifying that your computer exists',
+    'Gold-plating your 0-meter network cable (24K)',
+    'Deoxygenating your loopback interface for warmer data',
+    'Consulting our feng shui expert on optimal laptop orientation',
+    'Charging $999',
+    'Discovering we have no merchant account; refunding $999 in full',
+    'Crowning your edge node',
+  ]);
+
+  ultraBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+    modal.classList.add('open');
+    if (certNo) return showUltraDone();
+    box.innerHTML = '<h3 id="ultra-title">' + L('正在开通 Pro Max Ultra 至尊版', 'Activating Pro Max Ultra') + '</h3>'
+      + '<p class="msub">' + L('请勿关闭页面。关了也没关系，反正不会有任何变化。', 'Please do not close this page. Or do. Nothing will change either way.') + '</p>'
+      + '<ul class="steps"></ul>';
+    var ul = box.querySelector('.steps');
+    ultraSteps.forEach(function (s) {
+      var li = document.createElement('li');
+      li.innerHTML = '<span class="mark">○</span><span>' + s + '</span>';
+      ul.appendChild(li);
+    });
+    var lis = ul.children, i = 0;
+    (function next() {
+      if (i > 0) { lis[i - 1].classList.add('done'); lis[i - 1].querySelector('.mark').textContent = '✓'; }
+      if (i >= lis.length) {
+        return setTimeout(function () {
+          certNo = 'ULTRA-127001-' + Math.random().toString(16).slice(2, 8).toUpperCase();
+          try { localStorage.setItem(ULTRA_KEY, certNo); } catch (err) {}
+          markUltra(true);
+          showUltraDone();
+        }, reduce ? 0 : 500);
+      }
+      lis[i].classList.add('on');
+      lis[i].querySelector('.mark').textContent = '…';
+      i++;
+      setTimeout(next, reduce ? 0 : 750);
+    })();
+  });
+
+  function showUltraDone() {
+    box.innerHTML = '<h3 id="ultra-title">' + L('🎉 开通成功', '🎉 Welcome to Ultra') + '</h3>'
+      + '<p class="msub">' + L('您的至尊版与免费版功能完全相同，但现在它是金色的。', "Your Ultra plan is identical to the free plan, except now it's gold.") + '</p>'
+      + '<div class="receipt">'
+      + '<div><span>' + L('Pro Max Ultra 至尊版（月付）', 'Pro Max Ultra (monthly)') + '</span><span>' + L('¥6,999', '$999') + '</span></div>'
+      + '<div><span>' + L('镀金网线（0 米）', 'Gold-plated cable (0 m)') + '</span><span>' + L('¥0', '$0') + '</span></div>'
+      + '<div class="neg"><span>' + L('退款：我们没有收款账户', 'Refund: we have no merchant account') + '</span><span>' + L('−¥6,999', '−$999') + '</span></div>'
+      + '<div class="total"><span>' + L('实付', 'Total paid') + '</span><span>' + L('¥0', '$0') + '</span></div>'
+      + '</div>'
+      + '<canvas class="cert" width="1200" height="820" aria-label="' + L('至尊版证书', 'Ultra certificate') + '"></canvas>'
+      + '<div class="modal-acts">'
+      + '<button class="btn btn-ghost" type="button" data-act="cancel">' + L('退订（同样免费）', 'Cancel plan (also free)') + '</button>'
+      + '<button class="btn btn-gold" type="button" data-act="download">' + L('下载证书', 'Download certificate') + '</button>'
+      + '<button class="btn btn-primary" type="button" data-act="close">' + L('好的', 'Got it') + '</button>'
+      + '</div>';
+    var cv = box.querySelector('canvas');
+    drawCert(cv);
+    box.querySelector('[data-act=close]').addEventListener('click', closeModal);
+    box.querySelector('[data-act=download]').addEventListener('click', function () {
+      cv.toBlob(function (blob) {
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'nohop-ultra-certificate.png';
+        a.click();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+      });
+    });
+    box.querySelector('[data-act=cancel]').addEventListener('click', function () {
+      try { localStorage.removeItem(ULTRA_KEY); } catch (err) {}
+      certNo = null;
+      markUltra(false);
+      box.innerHTML = '<h3 id="ultra-title">' + L('退订成功', 'Plan cancelled') + '</h3>'
+        + '<p class="msub" style="margin:0">' + L('您的权益没有发生任何变化。网线已自动去金。', 'None of your benefits have changed. Your cable has been de-golded.') + '</p>'
+        + '<div class="modal-acts"><button class="btn btn-primary" type="button">' + L('好的', 'Got it') + '</button></div>';
+      box.querySelector('button').addEventListener('click', closeModal);
+    });
+  }
+
+  // 证书：用 canvas 画出来，下载时导出为 PNG
+  function drawCert(cv) {
+    var g = cv.getContext('2d'), W = cv.width, H = cv.height;
+    var sans = '-apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif';
+    var serif = 'Georgia, "Songti SC", "SimSun", serif';
+    g.fillStyle = '#fbf6e9'; g.fillRect(0, 0, W, H);
+    g.strokeStyle = '#c9932b'; g.lineWidth = 10; g.strokeRect(28, 28, W - 56, H - 56);
+    g.lineWidth = 2; g.strokeRect(48, 48, W - 96, H - 96);
+    g.textAlign = 'center'; g.fillStyle = '#8a6416';
+    g.font = '700 22px ' + sans; g.fillText('NOHOP  PRO MAX ULTRA', W / 2, 118);
+    g.fillStyle = '#2a1a00';
+    g.font = '700 54px ' + serif; g.fillText(L('至尊版尊享证书', 'Certificate of Ultra Supremacy'), W / 2, 192);
+    g.fillStyle = '#6b5a3a'; g.font = '26px ' + serif; g.fillText(L('兹证明', 'This certifies that'), W / 2, 262);
+    g.fillStyle = '#2a1a00'; g.font = '800 64px ' + serif; g.fillText(L('本台电脑', 'This Computer'), W / 2, 342);
+    g.fillStyle = '#4a3b20'; g.font = '26px ' + sans;
+    wrapText(g, L('已开通 NoHop Pro Max Ultra 至尊版，享有与免费版完全相同的全部权益。', 'has been upgraded to NoHop Pro Max Ultra, with every single privilege of the free plan.'), W / 2, 402, 860, 38);
+    var rows = [
+      [L('边缘节点', 'Edge node'), 'LOCALHOST-1'],
+      [L('证书编号', 'Certificate no.'), certNo],
+      [L('签发日期', 'Issued'), (function (d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); })(new Date())],
+      [L('有效期', 'Valid'), L('只要电脑开着', 'While your laptop is on')],
+    ];
+    g.textAlign = 'left';
+    rows.forEach(function (r, k) {
+      var y = 510 + k * 44;
+      g.fillStyle = '#8a7a5a'; g.font = '22px ' + sans; g.fillText(r[0], 170, y);
+      g.fillStyle = '#2a1a00'; g.font = '600 24px ' + sans; g.fillText(r[1], 360, y);
+    });
+    // 签名
+    g.strokeStyle = '#8a7a5a'; g.lineWidth = 1.5;
+    g.beginPath(); g.moveTo(170, 735); g.lineTo(520, 735); g.stroke();
+    g.fillStyle = '#2a1a00'; g.font = 'italic 34px ' + serif; g.fillText(L('您', 'You'), 180, 722);
+    g.fillStyle = '#8a7a5a'; g.font = '20px ' + sans; g.fillText(L('首席执行官（兼唯一用户）', 'CEO (and only user)'), 170, 764);
+    // 印章
+    var cx = W - 230, cy = 650;
+    g.save(); g.translate(cx, cy); g.rotate(-0.18);
+    g.strokeStyle = '#b4232b'; g.fillStyle = '#b4232b';
+    g.lineWidth = 6; g.beginPath(); g.arc(0, 0, 105, 0, Math.PI * 2); g.stroke();
+    g.lineWidth = 2; g.beginPath(); g.arc(0, 0, 88, 0, Math.PI * 2); g.stroke();
+    g.textAlign = 'center';
+    g.font = '800 30px ' + sans; g.fillText(L('环回认证', 'LOOPBACK'), 0, -8);
+    g.font = '800 ' + L('30', '26') + 'px ' + sans; g.fillText(L('专用章', 'CERTIFIED'), 0, 30);
+    g.font = '16px ' + sans; g.fillText('127.0.0.1', 0, 62);
+    g.restore();
+  }
+  function wrapText(g, text, x, y, maxW, lh) {
+    // 有空格按单词换行，没有空格（中文）按字换行
+    var parts = /\s/.test(text) ? text.split(' ') : text.split('');
+    var sep = /\s/.test(text) ? ' ' : '';
+    var line = '';
+    parts.forEach(function (p) {
+      var test = line ? line + sep + p : p;
+      if (g.measureText(test).width > maxW && line) { g.fillText(line, x, y); y += lh; line = p; }
+      else line = test;
+    });
+    if (line) g.fillText(line, x, y);
+  }
 
   // 切走标签页时
   var title = document.title;
