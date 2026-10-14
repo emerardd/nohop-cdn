@@ -912,7 +912,17 @@ footer .icp { font-size: 12.5px; }
         : '一台陌生的服务器';
       lines.push('',
         '<span class="c"># 本页面目前由竞争对手 ' + esc(who) + ' 分发。我们对此深表遗憾。</span>',
-        g('x-cache') ? '<span class="c"># 对方的响应头里也写着 x-cache。但对方的服务器不是您的电脑。</span>' : '<span class="c"># 对方甚至没有声明缓存命中。</span>',
+        !g('x-cache') ? '<span class="c"># 对方甚至没有声明缓存命中。</span>'
+          : /miss/i.test(g('x-cache')) ? '<span class="c"># 对方的 x-cache 是 MISS。NoHop 成立至今从未 MISS 过。</span>'
+          : '<span class="c"># 对方的响应头里也写着 x-cache: HIT。但对方的服务器不是您的电脑。</span>',
+        (function () {
+          // x-served-by 形如 cache-icn1450084-ICN，末尾是机场代码
+          var m = /-([A-Z]{3})$/.exec(g('x-served-by'));
+          if (!m) return '<span class="c"># 您的请求去了一个我们不知道的地方。NoHop 的请求从不出门。</span>';
+          var cities = { ICN: '首尔', NRT: '东京', HND: '东京', KIX: '大阪', HKG: '香港', TPE: '台北', SIN: '新加坡', SYD: '悉尼', BOM: '孟买', LAX: '洛杉矶', SJC: '圣何塞', SEA: '西雅图', IAD: '华盛顿', JFK: '纽约', ORD: '芝加哥', DFW: '达拉斯', FRA: '法兰克福', LHR: '伦敦', AMS: '阿姆斯特丹', CDG: '巴黎' };
+          var where = cities[m[1]] ? m[1] + '（' + cities[m[1]] + '）' : m[1];
+          return '<span class="c"># 您的请求刚刚去了一趟 ' + esc(where) + '。NoHop 的请求从不出门。</span>';
+        })(),
         '<span class="c"># x-hops: 未知（大于 0，这就已经输了）</span>',
         '<span class="c"># x-works-on-my-machine: 不再成立</span>');
       out.innerHTML = lines.join('\n');
