@@ -1,10 +1,27 @@
 {
   "name": "nohop-cdn",
   "version": "1.0.0",
-  "description": "全球唯一一个距离每位用户 0 米的内容分发网络",
+  "description": "全球唯一一个距离每位用户 0 米的内容分发网络 · The only CDN that is 0 meters from every user",
+  "keywords": [
+    "cdn",
+    "localhost",
+    "static-server",
+    "edge",
+    "parody"
+  ],
+  "homepage": "https://nohop.emerard.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emerardd/nohop-cdn.git"
+  },
+  "bugs": "https://github.com/emerardd/nohop-cdn/issues",
+  "author": "emerard",
   "bin": {
     "nohop-cdn": "bin/nohop-cdn.js"
   },
+  "files": [
+    "bin"
+  ],
   "scripts": {
     "start": "node bin/nohop-cdn.js site"
   },

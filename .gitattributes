@@ -1,0 +1,2 @@
+# 命令行脚本保持 LF，否则 Mac/Linux 上 shebang 会报 node 找不到
+bin/*.js text eol=lf
