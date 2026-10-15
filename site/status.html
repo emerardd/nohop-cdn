@@ -304,6 +304,10 @@ i18nToggle(document.getElementById('lang-btn'));
   // 绿色条纹：每天一格。灰色格子表示电脑关机的日子，按 SLA 不计入可用率。
   var host = location.hostname;
   var isPublic = !(location.protocol === 'file:' || host === 'localhost' || /\.localhost$/.test(host) || /^127\./.test(host) || host === '[::1]' || host === '::1');
+  // 官网上点过“假装我在 localhost”时，状态页也一起假装（指标是模拟的）
+  var simulated = false;
+  if (isPublic) { try { simulated = localStorage.getItem('nohop-pretend') === '1'; } catch (e) {} }
+  if (simulated) isPublic = false;
 
   var sleepDays = { edge: [4, 5, 31, 32, 61, 62, 63, 84] };
   document.querySelectorAll('[data-bars]').forEach(function (el) {
@@ -347,6 +351,25 @@ i18nToggle(document.getElementById('lang-btn'));
       "Live metrics unavailable: the server delivering this page isn't a NoHop edge node, and we can't read our competitor's data.");
     ['m-uptime', 'm-req', 'm-hit'].forEach(function (id) { document.getElementById(id).textContent = L('不详', 'Unknown'); });
     document.querySelectorAll('.metric b')[3].textContent = '>0';
+    return;
+  }
+  if (simulated) {
+    // 模拟指标：运行时长从打开页面算起，再加一个想象出来的基数
+    var base = 3 * 3600 + 27 * 60, t0 = Date.now(), reqs = 1270 + Math.floor(Math.random() * 300);
+    var tickSim = function () {
+      document.getElementById('m-uptime').textContent = fmt(base + Math.floor((Date.now() - t0) / 1000));
+      document.getElementById('m-req').textContent = (reqs++).toLocaleString();
+    };
+    tickSim(); setInterval(tickSim, 1000);
+    note.innerHTML = L(
+      '🎭 模拟模式：数据来自想象中的 127.0.0.1:8127/__nohop/status，距离您 0 米（想象中）。',
+      '🎭 Simulated mode: data from an imaginary 127.0.0.1:8127/__nohop/status, 0 meters from you (in spirit).')
+      + ' <button type="button" id="reality-btn" style="font:inherit;font-size:12px;font-weight:600;padding:1px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--text);cursor:pointer">'
+      + L('回到现实', 'Back to reality') + '</button>';
+    document.getElementById('reality-btn').addEventListener('click', function () {
+      try { localStorage.removeItem('nohop-pretend'); } catch (e) {}
+      location.reload();
+    });
     return;
   }
   if (location.protocol === 'file:') {

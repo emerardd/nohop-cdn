@@ -405,6 +405,7 @@ footer .icp { font-size: 12.5px; }
       <p>本页面目前位于 <b id="pb-host"></b>，距离您不是 0 米。一个 localhost CDN 的官网被放到了公网上，这违背了我们的一切原则。为获得最佳体验，请将本网站下载到您自己的电脑，然后通过 localhost 访问它：</p>
       <pre class="mono" id="pb-cmd"></pre>
       <p style="margin:14px 0 0;font-size:14px">完成后，您与本页面之间的距离将从“未知”缩短为 0 米。</p>
+      <div style="margin-top:16px"><button class="btn btn-primary" type="button" id="pretend-btn">🎭 假装我在 localhost</button></div>
     </div>
 
     <div class="logos">
@@ -868,6 +869,7 @@ i18nApply({
   '本页面目前位于': 'This page currently lives at',
   '，距离您不是 0 米。一个 localhost CDN 的官网被放到了公网上，这违背了我们的一切原则。为获得最佳体验，请将本网站下载到您自己的电脑，然后通过 localhost 访问它：': ', which is not 0 meters from you. The website of a localhost CDN has been deployed to the public internet, which goes against everything we stand for. For the best experience, download this website to your own computer and visit it via localhost:',
   '完成后，您与本页面之间的距离将从“未知”缩短为 0 米。': 'Once you do, the distance between you and this page drops from "unknown" to 0 meters.',
+  '🎭 假装我在 localhost': "🎭 Pretend I'm on localhost",
 
   '受到以下组织的信赖（全部由我们自己创立）': 'Trusted by these fine organizations (all founded by us)',
   '本机集团': 'Localhost Group', '环 回 银 行': 'Loopback Bank', '我自己科技': 'Myself Technologies',
@@ -1070,7 +1072,27 @@ i18nToggle(document.getElementById('lang-btn'));
   var viaNoHop = isLocal && !isFile;
   var repoUrl = 'https://github.com/emerardd/nohop-cdn';
 
-  if (isPublic) {
+  // 模拟 localhost 模式：公网访客可以“假装”自己在本地。页面切回本地版的样子，
+  // 但拿不到真正的 NoHop 数据，所以响应头和测速都是模拟的，并明确标注。
+  var PRETEND_KEY = 'nohop-pretend';
+  var simulated = false;
+  if (isPublic) { try { simulated = localStorage.getItem(PRETEND_KEY) === '1'; } catch (e) {} }
+  if (simulated) { isPublic = false; isLocal = true; }
+  function setPretend(on) {
+    try { on ? localStorage.setItem(PRETEND_KEY, '1') : localStorage.removeItem(PRETEND_KEY); } catch (e) {}
+    location.reload();
+  }
+  document.getElementById('pretend-btn').addEventListener('click', function () { setPretend(true); });
+
+  if (simulated) {
+    var annS = document.getElementById('announce');
+    annS.innerHTML = L(
+      '🎭 <b>模拟 localhost 模式</b>：本页面正在假装自己在您的电脑上。以下本地数据均为想象，就像我们的估值。',
+      '🎭 <b>Simulated localhost mode</b>: this page is pretending to be on your computer. All local data below is imaginary, just like our valuation.')
+      + ' <button type="button" id="reality-btn" style="font:inherit;font-size:12px;font-weight:700;margin-left:6px;padding:1px 10px;border-radius:999px;border:1px solid currentColor;background:transparent;color:inherit;cursor:pointer">'
+      + L('回到现实', 'Back to reality') + '</button>';
+    document.getElementById('reality-btn').addEventListener('click', function () { setPretend(false); });
+  } else if (isPublic) {
     var ann = document.getElementById('announce');
     ann.className = 'announce incident';
     ann.innerHTML = L(
@@ -1149,6 +1171,21 @@ i18nToggle(document.getElementById('lang-btn'));
     out.innerHTML = '<span class="c">' + L(
       '# 您正在通过 file:// 直接打开本页面，未经 NoHop 加速。\n# 在项目目录运行以下命令，即可将本页分发到全球边缘网络：',
       '# You opened this page via file://, with zero NoHop acceleration.\n# Run this in the project folder to deliver it to the global edge network:') + '\n\n</span>$ node bin/nohop-cdn.js site';
+  } else if (simulated) {
+    // 和真实 NoHop 返回的响应头一致，外加一行 x-simulated
+    var fakeHeaders = [
+      ['server', 'NoHop-Edge/1.0.0'], ['x-cache', 'HIT'], ['x-edge-location', '127.0.0.1'], ['x-edge-pop', 'LOCALHOST-1'],
+      ['x-hops', '0'], ['x-origin-distance', '0m'], ['x-served-by', 'your-computer'], ['x-works-on-my-machine', 'true'],
+      ['x-ai-routing', '127.0.0.1 (confidence 100%, tokens used 0)'], ['x-carbon-emissions', '0g (transport only)'],
+      ['x-latency-rank', '1/1'], ['x-speed-of-light', 'matched'], ['x-compliance', 'ISO-127001, SOC-0'],
+      ['via', '1.1 nohop-edge (127.0.0.1)'], ['x-simulated', 'true'],
+    ];
+    out.innerHTML = ['<span class="c">HTTP/1.1 200  ·  ' + L('往返 0.0 ms（想象中）', 'round trip 0.0 ms (imagined)') + '</span>']
+      .concat(fakeHeaders.map(function (h) { return '<span class="k">' + h[0] + '</span>: ' + esc(h[1]); }))
+      .concat(['',
+        cm(L('以上响应头均为模拟。想要真的，请运行 npx nohop-cdn。', 'These headers are simulated. For real ones, run npx nohop-cdn.')),
+        cm(L('实际上，本页面仍由 ' + esc(host) + ' 分发。我们选择不去想它。', 'In reality, this page is still served by ' + esc(host) + '. We choose not to think about it.'))])
+      .join('\n');
   } else if (isPublic) {
     var p0 = performance.now();
     fetch(location.href, { method: 'HEAD', cache: 'no-store' }).then(function (res) {
@@ -1212,6 +1249,23 @@ i18nToggle(document.getElementById('lang-btn'));
   run.addEventListener('click', function () {
     run.disabled = true;
     verdict.textContent = L('正在测量您到全球边缘网络的延迟……', 'Measuring your latency to the global edge network…');
+    if (simulated) {
+      // 模拟模式：用本地实测的典型范围（约 0.2–1.8 ms）编一组数，并如实说明是编的
+      var st = [], sn = 30;
+      (function sOnce() {
+        st.push(0.15 + Math.random() * 1.65);
+        gauge.innerHTML = st[st.length - 1].toFixed(2) + ' <small>ms</small>';
+        if (st.length < sn) return setTimeout(sOnce, reduce ? 0 : 40);
+        st.sort(function (a, b) { return a - b; });
+        gauge.innerHTML = st[Math.floor(sn / 2)].toFixed(2) + ' <small>ms</small>';
+        verdict.innerHTML = L(
+          '<b>您的速度击败了全国 100% 的用户！</b>参与排名用户：1 位。<br>（模拟测速，数据纯属想象。想要真实的 0 ms，请运行 npx nohop-cdn。）',
+          "<b>You're faster than 100% of users in your country!</b>Users ranked: 1.<br>(Simulated test. These numbers are pure imagination. For a real 0 ms, run npx nohop-cdn.)");
+        run.disabled = false;
+        run.textContent = L('再想象一次', 'Imagine again');
+      })();
+      return;
+    }
     if (isPublic) {
       // 公网模式：测的是到托管服务器的真实往返时间
       var pt = [], pn = 10;
